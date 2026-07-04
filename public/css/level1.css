@@ -1,0 +1,28 @@
+/**
+ * AI Level 1 Assistant - "Disable AI" native timeline button.
+ * Technical: Mirrors the structural properties of GLPI's native timeline
+ * buttons (box-shadow, border-radius, spacing, alignment) while using a
+ * dedicated color to stand out from the default actions.
+ */
+#ai-level1-request-human {
+    box-shadow: none;
+    margin-right: .5rem !important;
+    border-radius: var(--tblr-border-radius);
+    position: relative;
+    display: inline-flex;
+    vertical-align: middle;
+    background-color: #008cff;
+    border-color: #008cff;
+    color: #fff;
+}
+
+#ai-level1-request-human:hover,
+#ai-level1-request-human:focus {
+    background-color: #0070cc;
+    border-color: #0070cc;
+    color: #fff;
+}
+
+#ai-level1-request-human:disabled {
+    opacity: .65;
+}

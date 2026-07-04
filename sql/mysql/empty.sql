@@ -1,0 +1,1 @@
+-- No static SQL schema required: tables are created via Migration in hook.php (plugin_aisuite_install).

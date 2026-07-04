@@ -1,0 +1,121 @@
+/* AI SmartSorter Modal Styles */
+
+.ai-modal-overlay {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10000;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    animation: slideIn 0.5s ease-out;
+}
+
+.ai-modal-box {
+    background: #fff;
+    width: 350px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    border-radius: 8px;
+    border: 1px solid #d1d1d1;
+    overflow: hidden;
+}
+
+.ai-modal-header {
+    background: linear-gradient(135deg, #0f4c81 0%, #1e6bb8 100%);
+    color: white;
+    padding: 12px 15px;
+    font-weight: bold;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ai-pulse {
+    animation: pulse 2s infinite;
+}
+
+.ai-modal-body {
+    padding: 15px;
+    background: #f9f9f9;
+}
+
+.ai-reasoning {
+    font-style: italic;
+    color: #555;
+    font-size: 12px;
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+.ai-suggestion-box {
+    background: #fff;
+    border-left: 4px solid #0f4c81;
+    padding: 10px;
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.ai-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #888;
+    letter-spacing: 0.5px;
+}
+
+.ai-value {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin: 2px 0;
+}
+
+.ai-confidence {
+    font-size: 11px;
+    color: #28a745;
+    font-weight: 600;
+}
+
+/* HARDWARE ALERTS */
+.ai-hardware-alert {
+    margin-top: 10px;
+    padding: 8px 12px;
+    font-size: 12px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Hardware Found (Blue) */
+.ai-hardware-alert.success {
+    background: #e3f2fd;
+    color: #0d47a1;
+    border: 1px solid #bbdefb;
+}
+
+/* No Hardware Found (Grey/Orange) */
+.ai-hardware-alert.warning {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+    font-style: italic;
+}
+
+.ai-modal-footer {
+    padding: 10px 15px;
+    background: #fff;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Animations */
+@keyframes slideIn {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}

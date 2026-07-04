@@ -1,0 +1,348 @@
+/**
+ * Plugin GLPI AI CHAT - File: public/css/chatbot.css
+ * Styling for the floating chat bubble and the main chatbot window.
+ */
+
+:root {
+  /* Primary color from GLPI theme if available, fallback to default blue */
+  --glpiaichat-primary: rgb(var(--tblr-primary-rgb, 37, 99, 235));
+  --glpiaichat-primary-dark: #1942a3; /* Darker shade for hover states */
+  --glpiaichat-bg: #ffffff;
+  --glpiaichat-border: #e5e7eb;
+  --glpiaichat-text: #111827;
+  --glpiaichat-muted: #6b7280;
+  --glpiaichat-user-bg: var(--glpiaichat-primary);
+  --glpiaichat-user-text: #ffffff;
+  --glpiaichat-ia-bg: #f3f4f6;
+  --glpiaichat-ia-text: #111827;
+}
+
+/* Floating bubble */
+#glpiaichat-bubble {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  background: var(--glpiaichat-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 9999;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.35);
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out, background 0.2s ease-out;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+#glpiaichat-bubble:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 14px 35px rgba(15, 23, 42, 0.4);
+  background: var(--glpiaichat-primary-dark);
+}
+
+/* Main window */
+#glpiaichat-window {
+  position: fixed;
+  right: 24px;
+  bottom: 88px;
+  width: 380px;
+  max-height: 520px;
+  background: var(--glpiaichat-bg);
+  border-radius: 18px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.35);
+  display: none;
+  flex-direction: column;
+  z-index: 9999;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* Appearance animation */
+#glpiaichat-window.glpiaichat-open {
+  animation: glpiaichat-fade-in 0.18s ease-out;
+}
+
+@keyframes glpiaichat-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Header */
+.glpiaichat-header {
+  background: linear-gradient(135deg, var(--glpiaichat-primary), var(--glpiaichat-primary-dark));
+  color: #fff;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.glpiaichat-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.glpiaichat-header-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+
+.glpiaichat-header-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.glpiaichat-header-subtitle {
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+.glpiaichat-header-close {
+  background: none;
+  border: none;
+  color: #e5e7eb;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background 0.15s ease-out, color 0.15s ease-out;
+}
+
+.glpiaichat-header-close:hover {
+  background: rgba(15, 23, 42, 0.2);
+  color: #fff;
+}
+
+/* Messages area */
+.glpiaichat-messages {
+  padding: 10px 12px;
+  overflow-y: auto;
+  flex: 1;
+  background: #f9fafb;
+}
+
+/* Message rows (avatar + content) */
+.glpiaichat-message {
+  display: flex;
+  margin-bottom: 8px;
+  align-items: flex-start;
+}
+
+/* Avatar + label column */
+.glpiaichat-avatar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 10px;
+  color: var(--glpiaichat-muted);
+}
+
+/* Round avatar in the message flow */
+.glpiaichat-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.glpiaichat-avatar-ia {
+  background: rgba(37, 99, 235, 0.15);
+  color: var(--glpiaichat-primary);
+}
+
+.glpiaichat-avatar-user {
+  background: #e5e7eb;
+  color: #111827;
+}
+
+/* Content column (name + bubble) */
+.glpiaichat-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  max-width: 78%;
+}
+
+/* Name above the bubble */
+.glpiaichat-name {
+  font-size: 10px;
+  color: var(--glpiaichat-muted);
+  margin-bottom: 2px;
+}
+
+/* Message bubble */
+.glpiaichat-message-inner {
+  border-radius: 14px;
+  padding: 8px 10px;
+  font-size: 13px;
+  line-height: 1.35;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+/* IA Positioning (left) */
+.glpiaichat-message-ia {
+  justify-content: flex-start;
+}
+
+.glpiaichat-message-ia .glpiaichat-avatar-wrapper {
+  order: 0;
+  margin-right: 6px;
+}
+
+.glpiaichat-message-ia .glpiaichat-content-wrapper {
+  order: 1;
+  align-items: flex-start;
+}
+
+.glpiaichat-message-ia .glpiaichat-message-inner {
+  background: var(--glpiaichat-ia-bg);
+  color: var(--glpiaichat-ia-text);
+  border-bottom-left-radius: 4px;
+}
+
+/* User Positioning (right) */
+.glpiaichat-message-user {
+  justify-content: flex-end;
+}
+
+.glpiaichat-message-user .glpiaichat-avatar-wrapper {
+  order: 1;
+  margin-left: 6px;
+}
+
+.glpiaichat-message-user .glpiaichat-content-wrapper {
+  order: 0;
+  align-items: flex-end;
+}
+
+.glpiaichat-message-user .glpiaichat-message-inner {
+  background: var(--glpiaichat-user-bg);
+  color: var(--glpiaichat-user-text);
+  border-bottom-right-radius: 4px;
+}
+
+/* Buttons in IA responses */
+.glpiaichat-message-ia .glpiaichat-actions {
+  margin-top: 6px;
+}
+
+.glpiaichat-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  padding: 3px 9px;
+  font-size: 11px;
+  background: #ffffff;
+  color: #111827;
+  cursor: pointer;
+  transition: background 0.15s ease-out, transform 0.1s ease-out, box-shadow 0.15s ease-out;
+}
+
+.glpiaichat-btn:hover {
+  background: #eff6ff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.18);
+}
+
+.glpiaichat-btn-primary {
+  background: var(--glpiaichat-primary);
+  color: #ffffff;
+  border-color: var(--glpiaichat-primary);
+}
+
+.glpiaichat-btn-primary:hover {
+  background: var(--glpiaichat-primary-dark);
+}
+
+/* Footer with input area */
+.glpiaichat-footer {
+  border-top: 1px solid var(--glpiaichat-border);
+  background: #f9fafb;
+  padding: 8px;
+}
+
+.glpiaichat-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.glpiaichat-input {
+  flex: 1;
+  border-radius: 18px;
+  border: 1px solid var(--glpiaichat-border);
+  padding: 6px 9px;
+  font-size: 13px;
+  resize: none;
+  max-height: 90px;
+  outline: none;
+  background: #ffffff;
+}
+
+.glpiaichat-input:focus {
+  border-color: var(--glpiaichat-primary);
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.2);
+}
+
+/* Send button (round) */
+.glpiaichat-send {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: none;
+  background: var(--glpiaichat-primary);
+  color: #ffffff;
+  padding: 0;
+  cursor: pointer;
+  font-size: 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease-out, transform 0.1s ease-out, box-shadow 0.15s ease-out;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.45);
+}
+
+.glpiaichat-send:hover {
+  background: var(--glpiaichat-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.5);
+}
+
+.glpiaichat-send:disabled {
+  opacity: 0.5;
+  cursor: default;
+  box-shadow: none;
+}
+
+/* "IA is typing..." message */
+.glpiaichat-typing {
+  font-size: 11px;
+  color: var(--glpiaichat-muted);
+  margin-left: 6px;
+}

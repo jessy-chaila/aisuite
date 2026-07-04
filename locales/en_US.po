@@ -1,0 +1,869 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: AI Suite 1.0.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: front/config.form.php:44
+msgid "Connexion réussie !"
+msgstr "Connection successful!"
+
+#: front/config.form.php:156
+msgid "Paramètres IA"
+msgstr "AI Settings"
+
+#: front/config.form.php:201 inc/config.class.php:77
+msgid "Clé API"
+msgstr "API Key"
+
+#: front/config.form.php:217
+msgid "Tester la connexion"
+msgstr "Test connection"
+
+#: front/config.form.php:224 inc/config.class.php:87
+msgid "Prompt Système"
+msgstr "System Prompt"
+
+#: front/config.form.php:240
+msgid ""
+"L'IA recherche uniquement les mots clés extraits du titre du ticket et "
+"retrouvés dans le titre de l'article."
+msgstr ""
+"The AI only searches for keywords extracted from the ticket title and found "
+"in the article title."
+
+#: front/config.form.php:243
+msgid "Chercher dans la base de connaissances"
+msgstr "Search in Knowledge Base"
+
+#: front/config.form.php:265
+msgid "Enregistrer"
+msgstr "Save"
+
+#: front/config.form.php:290
+msgid "Configuration sauvegardée"
+msgstr "Configuration saved"
+
+#: front/suggestion.form.php:15
+msgid "Missing parameters."
+msgstr "Missing parameters."
+
+#: front/suggestion.form.php:32
+msgid "Empty content."
+msgstr "Empty content."
+
+#: inc/suggestion.class.php:36 inc/suggestion.class.php:456
+msgid "Ticket introuvable."
+msgstr "Ticket not found."
+
+#: inc/suggestion.class.php:77
+msgid "Actions Recommandées"
+msgstr "Recommended Actions"
+
+#: inc/suggestion.class.php:78
+msgid "Articles suggérés"
+msgstr "Suggested Articles"
+
+#: inc/suggestion.class.php:79
+msgid "HAUTE"
+msgstr "HIGH"
+
+#: inc/suggestion.class.php:80
+msgid "MOYENNE"
+msgstr "MEDIUM"
+
+#: inc/suggestion.class.php:81
+msgid "BASSE"
+msgstr "LOW"
+
+#: inc/suggestion.class.php:82
+msgid "article(s) trouvé(s) dans la base de connaissances"
+msgstr "article(s) found in the knowledge base"
+
+#: inc/suggestion.class.php:83
+msgid "Aucun article pertinent trouvé depuis la base de connaissance"
+msgstr "No relevant article found in the knowledge base"
+
+#: inc/suggestion.class.php:244
+#, php-format
+msgid "Erreur Provider : %s"
+msgstr "Provider Error: %s"
+
+#: inc/suggestion.class.php:247
+msgid "Réponse vide de l'IA."
+msgstr "Empty response from AI."
+
+#: inc/suggestion.class.php:263
+#, php-format
+msgid "Coût : %s Tokens utilisés (~%s €)"
+msgstr "Cost: %s Tokens used (~%s €)"
+
+#: inc/suggestion.class.php:305
+msgid "Erreur système :"
+msgstr "System error:"
+
+#: inc/suggestion.class.php:461
+msgid "[AI Smart Check] Analyse :"
+msgstr "[AI Smart Check] Analysis:"
+
+#: inc/suggestion.class.php:471
+msgid "Note ajoutée avec succès."
+msgstr "Note added successfully."
+
+#: inc/suggestion.class.php:472
+msgid "Erreur lors de la création de la note."
+msgstr "Error creating note."
+
+#: inc/ticket.class.php:23
+msgid "AI Smart Check"
+msgstr "AI Smart Check"
+
+#: inc/ticket.class.php:84
+msgid "Analyse Intelligente"
+msgstr "Smart Analysis"
+
+#: inc/ticket.class.php:87
+msgid "Sauvegardé"
+msgstr "Saved"
+
+#: inc/ticket.class.php:88
+msgid "Relancer"
+msgstr "Relaunch"
+
+#: inc/ticket.class.php:91
+msgid "Enregistrer en Note"
+msgstr "Save as Note"
+
+#: inc/ticket.class.php:92
+msgid "Note"
+msgstr "Note"
+
+#: inc/ticket.class.php:105
+msgid "Aucune analyse disponible"
+msgstr "No analysis available"
+
+#: inc/ticket.class.php:106
+msgid ""
+"L'IA va analyser le titre et la description pour proposer un diagnostic."
+msgstr "AI will analyze the title and description to propose a diagnosis."
+
+#: inc/ticket.class.php:108
+msgid "Lancer l'analyse"
+msgstr "Start analysis"
+
+#: inc/ticket.class.php:116
+msgid "Dernier changement :"
+msgstr "Last change:"
+
+#: inc/ticket.class.php:131
+msgid "Analyse en cours..."
+msgstr "Analysis in progress..."
+
+#: setup.php:55
+#, php-format
+msgid "This plugin requires GLPI >= %s"
+msgstr "This plugin requires GLPI >= %s"
+
+#: front/config.form.php:38
+msgid "Erreur API : "
+msgstr "API Error:"
+
+#: front/config.form.php:184 front/config.form.php:188
+msgid "Afficher l'historique"
+msgstr "Show history"
+
+#: front/config.form.php:216
+msgid "Connexion IA"
+msgstr "AI Connection"
+
+#: front/config.form.php:264
+msgid "Paramètres d'Automatisation"
+msgstr "Automation Settings"
+
+#: front/config.form.php:270
+msgid "Mode Expert (Auto-catégorisation)"
+msgstr "Expert Mode (Auto-categorization)"
+
+#: front/config.form.php:274
+msgid ""
+"Si activé, le ticket est qualifié automatiquement sans validation humaine si"
+" le seuil de confiance est atteint."
+msgstr ""
+"If enabled, the ticket is qualified automatically without human validation "
+"if the confidence threshold is met."
+
+#: front/config.form.php:281
+msgid "Seuil de confiance minimum (%)"
+msgstr "Minimum confidence threshold (%)"
+
+#: front/config.form.php:284
+msgid ""
+"Pourcentage de certitude minimal requis pour déclencher l'automatisation."
+msgstr "Minimum certainty percentage required to trigger automation."
+
+#: front/config.form.php:289
+msgid "Liaison Matérielle"
+msgstr "Hardware Linking"
+
+#: front/config.form.php:293
+msgid ""
+"Tenter d'identifier et de lier le matériel de l'utilisateur cité dans le "
+"ticket."
+msgstr "Attempt to identify and link user hardware mentioned in the ticket."
+
+#: front/config.form.php:298
+msgid "Prompt Système (Context)"
+msgstr "System Prompt (Context)"
+
+#: front/config.form.php:301
+msgid "Instructions spécifiques pour ajuster le comportement de l'IA."
+msgstr "Specific instructions to adjust AI behavior."
+
+#: front/config.form.php:317
+msgid "Historique des Analyses AI"
+msgstr "AI Analysis History"
+
+#: front/config.form.php:336
+msgid "ID"
+msgstr "ID"
+
+#: front/config.form.php:337
+msgid "Ticket"
+msgstr "Ticket"
+
+#: front/config.form.php:338
+msgid "Matériel"
+msgstr "Hardware"
+
+#: front/config.form.php:339
+msgid "Catégorie"
+msgstr "Category"
+
+#: front/config.form.php:340
+msgid "Coût"
+msgstr "Cost"
+
+#: front/config.form.php:341 front/modal.form.php:87
+msgid "Confiance"
+msgstr "Confidence"
+
+#: front/config.form.php:342
+msgid "Statut"
+msgstr "Status"
+
+#: front/config.form.php:357 front/modal.form.php:67 front/modal.form.php:68
+msgid "N/A"
+msgstr "N/A"
+
+#: front/config.form.php:363
+msgid "tokens"
+msgstr "tokens"
+
+#: front/config.form.php:378
+msgid "Appliqué"
+msgstr "Applied"
+
+#: front/config.form.php:380
+msgid "Ignoré"
+msgstr "Ignored"
+
+#: front/config.form.php:382
+msgid "Suggestion"
+msgstr "Suggestion"
+
+#: front/config.form.php:384
+msgid "Auto"
+msgstr "Auto"
+
+#: front/config.form.php:400
+msgid "Aucun historique disponible pour le moment."
+msgstr "No history available at the moment."
+
+#: front/config.form.php:405
+msgid "Fermer"
+msgstr "Close"
+
+#: front/config.form.php:476
+msgid "Test..."
+msgstr "Testing..."
+
+#: front/modal.form.php:14
+msgid "Unauthorized access (Central interface required)"
+msgstr "Unauthorized access (Central interface required)"
+
+#: front/modal.form.php:22
+msgid "Missing Ticket ID"
+msgstr "Missing Ticket ID"
+
+#: front/modal.form.php:85
+msgid "Suggestion AI SmartSorter"
+msgstr "AI SmartSorter Suggestion"
+
+#: front/modal.form.php:86
+msgid "Catégorie suggérée"
+msgstr "Suggested category"
+
+#: front/modal.form.php:88
+msgid "Matériel détecté"
+msgstr "Detected hardware"
+
+#: front/modal.form.php:89
+msgid "Aucun matériel détecté"
+msgstr "No hardware detected"
+
+#: front/modal.form.php:90
+msgid "Ignorer"
+msgstr "Dismiss"
+
+#: front/modal.form.php:91
+msgid "Appliquer"
+msgstr "Apply"
+
+#: front/modal.form.php:92
+msgid "Application..."
+msgstr "Applying..."
+
+#: front/modal.form.php:93
+msgid "Non déterminée"
+msgstr "Not determined"
+
+#: front/modal.form.php:96
+msgid "Coût estimé :"
+msgstr "Estimated cost:"
+
+#: front/modal.form.php:130
+msgid "Invalid Log ID"
+msgstr "Invalid Log ID"
+
+#: front/modal.form.php:137
+msgid "Log not found"
+msgstr "Log not found"
+
+#: front/modal.form.php:171
+#, php-format
+msgid "Matériel : %s ajouté dans l'onglet Éléments."
+msgstr "Hardware: %s added in the Elements tab."
+
+#: front/modal.form.php:195
+msgid "Ticket updated"
+msgstr "Ticket updated"
+
+#: front/modal.form.php:199
+msgid "Unknown Action"
+msgstr "Unknown Action"
+
+#: inc/provider/azure.class.php:77
+msgid "cURL Error: "
+msgstr "cURL Error:"
+
+#: inc/provider/azure.class.php:90
+msgid "Invalid response (Non-JSON): "
+msgstr "Invalid response (Non-JSON):"
+
+#: inc/provider/azure.class.php:96
+msgid "Unknown Error"
+msgstr "Unknown Error"
+
+#: inc/provider/azure.class.php:110
+msgid "Unexpected JSON structure (No \"choices\" found)."
+msgstr "Unexpected JSON structure (No \"choices\" found)."
+
+#: inc/sorter.class.php:44
+#, php-format
+msgid "Ticket #%d Analysis."
+msgstr "Ticket #%d Analysis."
+
+#: inc/sorter.class.php:104
+msgid "AI Error: "
+msgstr "AI Error:"
+
+#: inc/sorter.class.php:145
+#, php-format
+msgid "Auto-Applied changes for Ticket #%d (Score: %d%%)"
+msgstr "Auto-Applied changes for Ticket #%d (Score: %d%%)"
+
+#: inc/sorter.class.php:212
+#, php-format
+msgid ""
+"⚡ AI Auto-Action (Confiance %s%%) : Catégorie définie et matériel %s lié "
+"automatiquement."
+msgstr ""
+"⚡ AI Auto-Action (Confidence %s%%): Category defined and hardware %s linked "
+"automatically."
+
+#: inc/sorter.class.php:235
+#, php-format
+msgid ""
+"⚡ AI Auto-Action (Confiance %s%%) : Catégorie mise à jour automatiquement."
+msgstr "⚡ AI Auto-Action (Confidence %s%%): Category automatically updated."
+
+msgid "Numéro de téléphone du support"
+msgstr "Support phone number"
+
+msgid "Prompt système"
+msgstr "System prompt"
+
+msgid ""
+"Contexte métier, règles de niveau 1, exemples de cas à traiter ou à "
+"escalader…"
+msgstr ""
+"Business context, level 1 rules, examples of cases to handle or escalate..."
+
+msgid "Texte / emoji"
+msgstr "Text / emoji"
+
+msgid "Image (upload)"
+msgstr "Image (upload)"
+
+msgid "Couleur principale du bot"
+msgstr "Main bot color"
+
+msgid "Utiliser la couleur du thème GLPI (par défaut)"
+msgstr "Use GLPI theme color (default)"
+
+msgid "Merci de préciser votre question."
+msgstr "Please specify your question."
+
+msgid "Je n’ai pas pu générer de réponse."
+msgstr "I could not generate a response."
+
+msgid ""
+"Le service d’assistance automatique n’est pas configuré (URL, clé API ou "
+"modèle IA manquant). Veuillez contacter votre administrateur."
+msgstr ""
+"The automatic support service is not configured (URL, API key or AI model "
+"missing). Please contact your administrator."
+
+msgid "Erreur de communication avec le moteur IA (Claude)."
+msgstr "Communication error with AI engine (Claude)."
+
+msgid "Réponse IA invalide (format non JSON) pour Claude."
+msgstr "Invalid AI response (non-JSON format) for Claude."
+
+msgid "Erreur lors de l’appel au moteur IA (Claude)."
+msgstr "Error while calling the AI engine (Claude)."
+
+msgid "Erreur de communication avec le moteur IA (%s)."
+msgstr "Communication error with the AI engine (%s)."
+
+msgid "Réponse IA invalide (format non JSON) pour %s."
+msgstr "Invalid AI response (non-JSON format) for %s."
+
+msgid "Erreur lors de l’appel au moteur IA (%s)."
+msgstr "Error while calling the AI engine (%s)."
+
+msgid "Erreur renvoyée par l’API distante."
+msgstr "Error returned by the remote API."
+
+msgid "Erreur renvoyée par l’API %s : %s"
+msgstr "Error returned by the %s API: %s"
+
+msgid ""
+"Le fournisseur d’IA sélectionné (%s) n’est pas reconnu par cette version du "
+"plugin."
+msgstr ""
+"The selected AI provider (%s) is not recognized by this version of the "
+"plugin."
+
+msgid "Le moteur IA (%s) n’a renvoyé aucun contenu."
+msgstr "The AI engine (%s) returned no content."
+
+msgid "Demande via chatbot IA"
+msgstr "Request via AI Chatbot"
+
+msgid "Conversation utilisateur (via chatbot IA) :"
+msgstr "User conversation (via AI chatbot):"
+
+msgid "Message %d de l'utilisateur :"
+msgstr "User message %d:"
+
+msgid "Claude (Anthropic)"
+msgstr "Claude (Anthropic)"
+
+msgid "Gemini (Google)"
+msgstr "Gemini (Google)"
+
+msgid "Vous"
+msgstr "You"
+
+msgid "AI Chatbot"
+msgstr "AI Chatbot"
+
+msgid "AI Smart Sorter"
+msgstr "AI Smart Sorter"
+
+msgid "API Error (%s): %s"
+msgstr "API Error (%s): %s"
+
+msgid "Anthropic (Claude)"
+msgstr "Anthropic (Claude)"
+
+msgid ""
+"Clé API manquante. Configurez le fournisseur IA actif dans l'onglet « "
+"Fournisseurs IA »."
+msgstr ""
+"Missing API key. Configure the active AI provider in the \"AI Providers\" "
+"tab."
+
+msgid "Configuration AI Suite"
+msgstr "AI Suite Configuration"
+
+msgid "Connexion à l'IA"
+msgstr "AI Connection"
+
+msgid "Content Filter: Response blocked by provider safety settings."
+msgstr "Content Filter: Response blocked by provider safety settings."
+
+msgid ""
+"Définissez ici le comportement du bot : son ton, ses règles métier, les cas "
+"à traiter ou à escalader vers un ticket, etc."
+msgstr ""
+"Define the bot's behavior here: its tone, business rules, cases to handle or"
+" escalate to a ticket, etc."
+
+msgid "Erreur réseau"
+msgstr "Network error"
+
+msgid "Fournisseur actif"
+msgstr "Active provider"
+
+msgid "Fournisseurs IA"
+msgstr "AI Providers"
+
+msgid "Google (Gemini)"
+msgstr "Google (Gemini)"
+
+msgid "Image d'icône (upload)"
+msgstr "Icon image (upload)"
+
+msgid "Instructions globales pour l'analyse de ticket."
+msgstr "Global instructions for ticket analysis."
+
+msgid ""
+"Le fournisseur choisi ci-dessous est utilisé par tous les modules AI Suite "
+"(AI Smart Check, AI Smart Sorter, AI Chatbot). Chaque fournisseur conserve "
+"ses propres identifiants même si vous changez de sélection."
+msgstr ""
+"The provider selected below is used by all AI Suite modules (AI Smart Check,"
+" AI Smart Sorter, AI Chatbot). Each provider keeps its own credentials even "
+"if you change the selection."
+
+msgid "Modèle / Déploiement"
+msgstr "Model / Deployment"
+
+msgid "OpenAI (compatible : OpenAI, Azure, xAI, Mistral)"
+msgstr "OpenAI (compatible: OpenAI, Azure, xAI, Mistral)"
+
+msgid "OpenAI (compatible)"
+msgstr "OpenAI (compatible)"
+
+msgid "Personnalisation de l'interface"
+msgstr "Interface customization"
+
+msgid ""
+"Proposé à l'utilisateur pour les cas urgents (bouton « Appeler le support "
+"»)."
+msgstr "Offered to the user for urgent cases (\"Call support\" button)."
+
+msgid ""
+"Si activé, l'IA tentera de trouver des articles pertinents dans la base de "
+"connaissances GLPI."
+msgstr ""
+"If enabled, the AI will try to find relevant articles in the GLPI knowledge "
+"base."
+
+msgid "Texte / emoji de l'icône"
+msgstr "Icon text / emoji"
+
+msgid "Type d'icône du bot"
+msgstr "Bot icon type"
+
+msgid "URL Endpoint"
+msgstr "URL Endpoint"
+
+msgid ""
+"Utilise le fournisseur actif configuré dans l'onglet « Fournisseurs IA » "
+"(actuellement : %s)."
+msgstr ""
+"Uses the active provider configured in the \"AI Providers\" tab (currently: "
+"%s)."
+
+msgid "Veuillez renseigner la clé API."
+msgstr "Please enter the API key."
+
+msgid ""
+"Bonjour, cet assistant vous aide à formuler et suivre vos demandes GLPI. "
+"Décrivez votre problème et il vous proposera des vérifications simples ou "
+"l'ouverture d'un ticket si nécessaire."
+msgstr ""
+"Hello, this assistant helps you formulate and track your GLPI requests. "
+"Describe your problem and it will suggest simple checks or opening a ticket "
+"if necessary."
+
+msgid "Assistant GLPI"
+msgstr "GLPI Assistant"
+
+msgid "Décrivez votre problème..."
+msgstr "Describe your problem..."
+
+msgid "Envoyer"
+msgstr "Send"
+
+msgid "Support niveau 1"
+msgstr "Level 1 support"
+
+msgid "Accès non autorisé."
+msgstr "Unauthorized access."
+
+msgid "Accès non autorisé à ce ticket."
+msgstr "Unauthorized access to this ticket."
+
+msgid "Jeton CSRF invalide."
+msgstr "Invalid CSRF token."
+
+msgid "Empty response content."
+msgstr "Empty response content."
+
+msgid "Prix entrée ($ / 1M tokens)"
+msgstr "Input price ($ / 1M tokens)"
+
+msgid "Prix sortie ($ / 1M tokens)"
+msgstr "Output price ($ / 1M tokens)"
+
+msgid ""
+"Sert uniquement à estimer le coût affiché dans AI Smart Check et AI Smart "
+"Sorter (n'affecte pas la facturation réelle du fournisseur)."
+msgstr ""
+"Only used to estimate the cost shown in AI Smart Check and AI Smart Sorter "
+"(does not affect actual billing from the provider)."
+
+msgid "Module activé"
+msgstr "Module enabled"
+
+msgid ""
+"Désactivez ce module si vous ne voulez pas afficher l'onglet d'analyse IA "
+"sur les tickets."
+msgstr ""
+"Disable this module if you don't want to show the AI analysis tab on "
+"tickets."
+
+msgid ""
+"Désactivez ce module si vous ne voulez pas classer/catégoriser "
+"automatiquement les nouveaux tickets."
+msgstr ""
+"Disable this module if you don't want new tickets to be automatically "
+"sorted/categorized."
+
+msgid ""
+"Désactivez ce module si vous ne voulez pas afficher la bulle de discussion "
+"IA."
+msgstr "Disable this module if you don't want to show the AI chat bubble."
+
+msgid "Module AI Smart Check désactivé."
+msgstr "AI Smart Check module disabled."
+
+msgid "Module AI Smart Sorter désactivé."
+msgstr "AI Smart Sorter module disabled."
+
+msgid "Module AI Chatbot désactivé."
+msgstr "AI Chatbot module disabled."
+
+msgid "AI Level 1 Assistant"
+msgstr "AI Level 1 Assistant"
+
+msgid "AI Level 1 Assistant Error: "
+msgstr "AI Level 1 Assistant Error: "
+
+msgid "Aucun (pas de réattribution automatique)"
+msgstr "None (no automatic reassignment)"
+
+msgid ""
+"Désactivez ce module si vous ne voulez pas que l'IA réponde automatiquement "
+"dans les nouveaux tickets."
+msgstr ""
+"Disable this module if you don't want the AI to automatically reply in new "
+"tickets."
+
+msgid "Groupe technicien d'escalade"
+msgstr "Escalation technician group"
+
+msgid ""
+"Instructions supplémentaires pour ajuster le comportement de l'assistant "
+"(ton, procédures internes, cas à toujours escalader, etc.)."
+msgstr ""
+"Additional instructions to adjust the assistant's behavior (tone, internal "
+"procedures, cases that should always be escalated, etc.)."
+
+msgid "Module AI Level 1 Assistant désactivé."
+msgstr "AI Level 1 Assistant module disabled."
+
+msgid "Réattribution"
+msgstr "Reassignment"
+
+msgid "Une erreur est survenue, réessayez plus tard."
+msgstr "An error occurred, please try again later."
+
+msgid "Votre demande a été transmise à un technicien."
+msgstr "Your request has been forwarded to a technician."
+
+msgid ""
+"Voulez-vous être pris en charge directement par un technicien humain, sans "
+"passer par l'assistant IA ?"
+msgstr ""
+"Do you want to be taken in charge directly by a human technician, without "
+"going through the AI assistant?"
+
+msgid ""
+"À la création d'un ticket, ce module tente de proposer une solution de "
+"niveau 1 (sans droits administrateur ni compétence technique) directement "
+"dans le ticket. S'il n'a pas assez d'éléments, il pose des questions de "
+"clarification puis réattribue le ticket au groupe défini ci-dessous."
+msgstr ""
+"When a ticket is created, this module tries to suggest a level-1 solution "
+"(no admin rights or technical skill required) directly in the ticket. If it "
+"doesn't have enough information, it asks clarifying questions then reassigns"
+" the ticket to the group defined below."
+
+msgid ""
+"🙋 L'utilisateur a demandé à être pris en charge directement par un "
+"technicien."
+msgstr ""
+"🙋 The user has requested to be taken in charge directly by a technician."
+
+msgid "🤖 Assistant IA — Suggestion de résolution :"
+msgstr "🤖 AI Assistant — Suggested solution:"
+
+msgid "Level 1 Assistant - Ticket #%d Analysis (round %d)."
+msgstr "Level 1 Assistant - Ticket #%d Analysis (round %d)."
+
+msgid ""
+"🤖 Assistant IA : merci pour ces précisions. J'ai encore besoin de quelques "
+"éléments :"
+msgstr ""
+"🤖 AI Assistant: thanks for these details. I still need a few more things:"
+
+msgid ""
+"🤖 Assistant IA : merci pour ces précisions. Je ne suis malheureusement pas "
+"en mesure de résoudre ce ticket seul, un technicien va prendre le relais."
+msgstr ""
+"🤖 AI Assistant: thanks for these details. Unfortunately I'm not able to "
+"resolve this ticket on my own, a technician will take over."
+
+msgid ""
+"🤖 Assistant IA : pourriez-vous préciser quelques points pour m'aider à vous "
+"proposer une solution ?"
+msgstr ""
+"🤖 AI Assistant: could you clarify a few points to help me suggest a "
+"solution?"
+
+msgid ""
+"AI Level 1 Assistant: processes queued ticket analyses and follow-up replies"
+" in the background."
+msgstr ""
+"AI Level 1 Assistant: processes queued ticket analyses and follow-up replies"
+" in the background."
+
+msgid ""
+"Processes AI Level 1 Assistant ticket analyses and follow-up replies in the "
+"background."
+msgstr ""
+"Processes AI Level 1 Assistant ticket analyses and follow-up replies in the "
+"background."
+
+msgid "Désactiver l'IA"
+msgstr "Disable AI"
+
+msgid "Assistant IA"
+msgstr "AI Assistant"
+
+msgid ""
+"Ce groupe sera créé automatiquement à la prochaine installation/mise à jour "
+"du plugin."
+msgstr ""
+"This group will be created automatically on the next plugin install/upgrade."
+
+msgid ""
+"Créé et géré automatiquement par le plugin : chaque ticket pris en charge "
+"par l'IA y est assigné le temps qu'elle s'en occupe, et il en est retiré dès"
+" que l'utilisateur désactive l'IA, qu'un technicien répond directement, ou "
+"que le ticket est réattribué au groupe d'escalade ci-dessous."
+msgstr ""
+"Created and managed automatically by the plugin: every ticket the AI is "
+"handling is assigned to it for as long as it works on it, and removed as "
+"soon as the user disables the AI, a technician replies directly, or the "
+"ticket is reassigned to the escalation group below."
+
+msgid "Groupe \"Assistant IA\""
+msgstr "\"AI Assistant\" group"
+
+msgid ""
+"Groupe auquel le ticket est réattribué uniquement lorsque l'IA ne peut plus "
+"l'aider elle-même (nombre de tours de questions atteint) et qu'elle n'a pas "
+"été désactivée manuellement. En cas de désactivation manuelle ou de prise en"
+" charge par un technicien, le ticket est simplement désassigné (Tickets "
+"entrants)."
+msgstr ""
+"Group to which the ticket is reassigned only when the AI can no longer help "
+"on its own (question round limit reached) and it hasn't been manually "
+"disabled. On manual opt-out or technician takeover, the ticket is simply "
+"unassigned (Incoming tickets)."
+
+msgid ""
+"Groupe créé automatiquement par le plugin AI Suite : les tickets pris en "
+"charge par l'Assistant IA Niveau 1 y sont assignés temporairement."
+msgstr ""
+"Group created automatically by the AI Suite plugin: tickets handled by the "
+"Level 1 AI Assistant are temporarily assigned to it."
+
+msgid "Dernière activité"
+msgstr "Last activity"
+
+msgid "En cours"
+msgstr "In progress"
+
+msgid "Escaladé au groupe"
+msgstr "Escalated to group"
+
+msgid "Historique de l'Assistant IA Niveau 1"
+msgstr "Level 1 AI Assistant History"
+
+msgid "IA désactivée (utilisateur)"
+msgstr "AI disabled (user)"
+
+msgid "Pris en charge par un technicien"
+msgstr "Taken over by a technician"
+
+msgid "Résolu par l'IA"
+msgstr "Resolved by AI"
+
+msgid "Ticket clôturé"
+msgstr "Ticket closed"
+
+msgid "Tour"
+msgstr "Round"
+
+msgid "Clé déjà enregistrée — laisser vide pour la conserver"
+msgstr "Key already saved — leave blank to keep it"
+
+msgid "Droits insuffisants pour modifier ce ticket."
+msgstr "Insufficient rights to update this ticket."
+
+msgid "Erreur lors de la création du ticket."
+msgstr "Error while creating the ticket."
+
+msgid ""
+"Erreur système lors de l'analyse IA. Consultez les journaux du serveur pour "
+"plus de détails."
+msgstr "System error during AI analysis. Check the server logs for details."
+
+msgid "Erreur système. Veuillez réessayer plus tard."
+msgstr "System error. Please try again later."
+
+msgid "Invalid provider URL: only HTTPS endpoints are allowed."
+msgstr "Invalid provider URL: only HTTPS endpoints are allowed."
+
+msgid ""
+"Response too long (token limit reached). Increase the max tokens setting."
+msgstr ""
+"Response too long (token limit reached). Increase the max tokens setting."
