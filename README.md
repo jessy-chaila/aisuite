@@ -11,8 +11,8 @@ AI Suite is a GLPI plugin that brings AI assistance to every stage of ticket han
 ### 🔍 AI Smart Check — Level 2 ticket analysis
 Adds an "AI Smart Check" tab directly on the ticket view. The AI reads the title and description and acts as a level 2 assistant: it suggests a step-by-step resolution checklist, looks up relevant Knowledge Base articles, and lets the technician export its analysis as a private note in one click.
 
-### 🗂️ AI Smart Sorter — automatic categorization & asset linking
-Runs automatically when a ticket is created. It acts as an intelligent dispatcher: it assigns the most relevant ITIL category and detects which hardware asset (computer, monitor, printer…) the user is referring to, then either suggests the change or applies it automatically ("Auto-Pilot" mode) once a configurable confidence threshold is reached.
+### 🗂️ AI Smart Sorter — automatic categorization, type & asset linking
+Runs automatically when a ticket is created. It acts as an intelligent dispatcher: it assigns the most relevant ITIL category, sets the appropriate ticket type (Incident or Request), and detects which hardware asset (computer, monitor, printer…) the user is referring to, then either suggests the changes or applies them automatically ("Auto-Pilot" mode) once a configurable confidence threshold is reached. Ticket types are read directly from the running GLPI instance, so their labels always match its language and configuration.
 
 ### 🤖 AI Chatbot — Level 1 support agent
 A floating chat bubble available across GLPI. It acts as a level 1 support agent, answering simple non-technical questions, and automatically proposes opening a ticket (with full conversation history) when the request needs a human.
@@ -26,7 +26,7 @@ Runs automatically when a ticket is created and replies directly in the ticket i
 * **Per-module enable/disable** — turn any of the four modules on or off independently from its own configuration tab (e.g. keep only the chatbot active). Disabling a module fully unregisters its GLPI tab/hooks/assets, not just hides it.
 * **User-editable cost estimation** — set your own input/output price per 1M tokens for each provider family directly in the config screen; the cost/token estimates shown in Smart Check and Smart Sorter update automatically, no code changes needed.
 * **Cost & token tracking** — every AI call displays its estimated cost and token usage (Smart Check tab, Smart Sorter popup and history dashboard).
-* **Audit trail** — Smart Sorter logs every AI decision (category, hardware, confidence, cost) and creates a private task in the ticket for full traceability.
+* **Audit trail** — Smart Sorter logs every AI decision (category, type, hardware, confidence, cost) and creates a private task in the ticket for full traceability.
 * **One-click connection test** — validate any provider's API key/URL/model straight from the config screen before saving.
 
 ## 🛠️ Configuration
@@ -35,7 +35,7 @@ Everything is managed from **Setup > Plugins > AI Suite**, a single screen with 
 
 * **AI Providers** — pick the active provider family and fill in its URL, API key, model/deployment and cost-estimation prices. A "Test connection" button lets you validate credentials instantly.
 * **AI Smart Check** — enable/disable the module, customize its system prompt, and toggle Knowledge Base search.
-* **AI Smart Sorter** — enable/disable the module, configure Auto-Pilot mode and its confidence threshold, toggle hardware linking, customize the system prompt, and browse the analysis history.
+* **AI Smart Sorter** — enable/disable the module, configure Auto-Pilot mode and its confidence threshold, toggle hardware linking, customize the system prompt, and browse the analysis history. Category and ticket type suggestions are always included; hardware linking is optional.
 * **AI Level 1 Assistant** — enable/disable the module, pick the technician group tickets get reassigned to when the AI can't resolve them, and customize the system prompt.
 * **AI Chatbot** — enable/disable the module, set the support phone number, customize the system prompt, and personalize the bubble's icon and color.
 

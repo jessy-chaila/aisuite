@@ -867,3 +867,26 @@ msgid ""
 "Response too long (token limit reached). Increase the max tokens setting."
 msgstr ""
 "Response too long (token limit reached). Increase the max tokens setting."
+
+msgid "Type suggéré"
+msgstr "Suggested type"
+
+msgid "type (%s)"
+msgstr "type (%s)"
+
+msgid "catégorie"
+msgstr "category"
+
+msgid "Classification définie (%s) et "
+msgstr "Classification set (%s) and "
+
+msgid "⚡ AI Auto-Action (Confiance %s%%) : %smatériel %s lié automatiquement."
+msgstr ""
+"⚡ AI Auto-Action (Confidence %s%%): %shardware %s linked automatically."
+
+msgid ""
+"⚡ AI Auto-Action (Confiance %s%%) : Classification mise à jour "
+"automatiquement (%s)."
+msgstr ""
+"⚡ AI Auto-Action (Confidence %s%%): Classification automatically updated "
+"(%s)."

@@ -71,6 +71,12 @@ $(document).ready(function() {
             categoryDisplay = '<span style="color:#999; font-style:italic;">' + lbl.not_determined + '</span>';
         }
 
+        /* Technical: Ticket type display logic with fallback for undetermined values */
+        var typeDisplay = data.ticket_type;
+        if (!typeDisplay || typeDisplay === 'N/A' || typeDisplay === 'null') {
+            typeDisplay = '<span style="color:#999; font-style:italic;">' + lbl.not_determined + '</span>';
+        }
+
         /* Technical: Hardware display logic - handles Free vs Premium UI states */
         var hardwareHtml = '';
 
@@ -125,6 +131,8 @@ $(document).ready(function() {
                     <div class="ai-suggestion-box">
                         <div class="ai-label">${lbl.suggested_cat}</div>
                         <div class="ai-value">${categoryDisplay}</div>
+                        <div class="ai-label" style="margin-top:8px;">${lbl.suggested_type}</div>
+                        <div class="ai-value">${typeDisplay}</div>
                         <div class="ai-confidence">${lbl.confidence}: ${data.confidence}%</div>
                     </div>
 

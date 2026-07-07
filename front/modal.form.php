@@ -114,6 +114,18 @@ if ($action === 'get_suggestion') {
     $categoryName = $aiData['suggested_category_name'] ?? $aiData['suggested_category'] ?? __('N/A', 'aisuite');
     if ($categoryName === 'null') $categoryName = __('N/A', 'aisuite');
 
+    /* Technical: Resolve the suggested ticket type. Display the instance's own
+     * localized label (from Ticket::getTypes()) when the suggested ID is one of
+     * the types actually available, rather than trusting the AI-provided name. */
+    $availableTypes = (method_exists('Ticket', 'getTypes')) ? Ticket::getTypes() : [];
+    $suggestedTypeId = isset($aiData['suggested_type_id']) ? (int)$aiData['suggested_type_id'] : 0;
+    $typeName = null;
+    if ($suggestedTypeId > 0 && isset($availableTypes[$suggestedTypeId])) {
+        $typeName = $availableTypes[$suggestedTypeId];
+    } elseif (!empty($aiData['suggested_type_name']) && $aiData['suggested_type_name'] !== 'null') {
+        $typeName = $aiData['suggested_type_name'];
+    }
+
     /* Technical: Hardware identification */
     $hardwareDisplay = $aiData['detected_hardware_display']
         ?? $aiData['detected_hardware_name']
@@ -127,6 +139,7 @@ if ($action === 'get_suggestion') {
     $labels = [
         'title'          => __('Suggestion AI SmartSorter', 'aisuite'),
         'suggested_cat'  => __('Catégorie suggérée', 'aisuite'),
+        'suggested_type' => __('Type suggéré', 'aisuite'),
         'confidence'     => __('Confiance', 'aisuite'),
         'hardware_found' => __('Matériel détecté', 'aisuite'),
         'hardware_none'  => __('Aucun matériel détecté', 'aisuite'),
@@ -142,6 +155,7 @@ if ($action === 'get_suggestion') {
         'has_suggestion' => true,
         'log_id'         => $row['id'],
         'category'       => $categoryName,
+        'ticket_type'    => $typeName,
         'reasoning'      => $aiData['reasoning'] ?? '',
         'confidence'     => $row['confidence_score'],
         'hardware'       => $hardwareDisplay,
@@ -197,6 +211,8 @@ if ($action === 'apply_suggestion') {
      * an arbitrary category: a successful prompt injection when the
      * suggestion was generated could otherwise have stored an ID the AI was
      * never actually offered). */
+    $ticketUpdate = ['id' => $ticketId];
+
     $newCategoryId = isset($aiData['suggested_category_id']) ? (int)$aiData['suggested_category_id'] : 0;
     if ($newCategoryId > 0) {
         $validCategory = $DB->request([
@@ -206,12 +222,22 @@ if ($action === 'apply_suggestion') {
         ])->current()['cpt'] ?? 0;
 
         if ($validCategory > 0) {
-            $ticket = new Ticket();
-            $ticket->update([
-                'id'                => $ticketId,
-                'itilcategories_id' => $newCategoryId
-            ]);
+            $ticketUpdate['itilcategories_id'] = $newCategoryId;
         }
+    }
+
+    /* Technical: Apply the suggested ticket type - only if it's one of the
+     * types actually available in this GLPI instance (Ticket::getTypes()),
+     * never trusted as an arbitrary value coming from the stored AI JSON. */
+    $availableTypes = (method_exists('Ticket', 'getTypes')) ? Ticket::getTypes() : [];
+    $newTypeId = isset($aiData['suggested_type_id']) ? (int)$aiData['suggested_type_id'] : 0;
+    if ($newTypeId > 0 && isset($availableTypes[$newTypeId])) {
+        $ticketUpdate['type'] = $newTypeId;
+    }
+
+    if (count($ticketUpdate) > 1) {
+        $ticket = new Ticket();
+        $ticket->update($ticketUpdate);
     }
 
     /* Technical: Link hardware items and create private task.

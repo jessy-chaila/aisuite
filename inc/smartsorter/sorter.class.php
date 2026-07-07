@@ -47,6 +47,7 @@ class Sorter {
 
         $categoriesMap = $this->getGLPICategories();
         $assetsMap     = $this->getRequesterAssets($ticket);
+        $typesMap      = $this->getTicketTypes();
 
         Toolbox::logInFile('aisuite', sprintf(__("Ticket #%d Analysis.", 'aisuite'), $ticketId) . "\n");
 
@@ -55,6 +56,7 @@ class Sorter {
             : json_encode(array_keys($assetsMap), JSON_UNESCAPED_UNICODE);
 
         $categoriesStr = json_encode($categoriesMap, JSON_UNESCAPED_UNICODE);
+        $typesStr      = json_encode($typesMap, JSON_UNESCAPED_UNICODE);
         $customContext = $this->config['sorter_system_prompt_context'] ?? '';
 
         /* Technical: Reinforced prompt with few-shot examples for strict language matching */
@@ -75,14 +77,18 @@ class Sorter {
         AVAILABLE CATEGORIES (ID => Name):
         $categoriesStr
 
+        AVAILABLE TICKET TYPES (ID => Name):
+        $typesStr
+
         USER ASSETS (Type - Name):
         $assetsListStr
 
         RULES:
         1. You MUST choose a 'suggested_category_id' strictly from the AVAILABLE CATEGORIES list.
-        2. If the text mentions a device, check if it matches one in USER ASSETS using logical deduction.
-        3. Output strictly valid JSON.
-        4. Write the 'reasoning' in the SAME LANGUAGE as the user request (STRICTLY).
+        2. You MUST choose a 'suggested_type_id' strictly from the AVAILABLE TICKET TYPES list. Typically, a malfunction/breakage/error is an Incident, while a request for a new service/access/information is a Request (Demande).
+        3. If the text mentions a device, check if it matches one in USER ASSETS using logical deduction.
+        4. Output strictly valid JSON.
+        5. Write the 'reasoning' in the SAME LANGUAGE as the user request (STRICTLY).
 
         Context provided by admin: $customContext
 
@@ -90,6 +96,8 @@ class Sorter {
         {
             \"suggested_category_id\": <ID_INT_OR_NULL>,
             \"suggested_category_name\": \"<NAME_STRING>\",
+            \"suggested_type_id\": <ID_INT_OR_NULL>,
+            \"suggested_type_name\": \"<NAME_STRING>\",
             \"confidence_score\": <0-100>,
             \"detected_hardware_name\": \"<EXACT_NAME_FROM_USER_ASSETS_OR_NULL>\",
             \"reasoning\": \"<REASONING_IN_THE_SAME_LANGUAGE_AS_USER_INPUT>\"
@@ -210,15 +218,40 @@ class Sorter {
     private function applyChangesDirectly(Ticket $ticket, $aiData, array $categoriesMap = []) {
         $ticketId = $ticket->getID();
 
+        $updateFields = ['id' => $ticketId];
+
         $newCategoryId = isset($aiData['suggested_category_id']) ? (int)$aiData['suggested_category_id'] : 0;
         if ($newCategoryId > 0 && isset($categoriesMap[$newCategoryId])) {
-            $ticket->update([
-                'id'                => $ticketId,
-                'itilcategories_id' => $newCategoryId
-            ]);
+            $updateFields['itilcategories_id'] = $newCategoryId;
         } else {
             $newCategoryId = 0;
         }
+
+        /* Technical: Apply ticket type - only if it's one of the types actually
+         * available in this GLPI instance (see getTicketTypes()), never trusted
+         * as an arbitrary value coming from the AI JSON. */
+        $typesMap    = $this->getTicketTypes();
+        $newTypeId   = isset($aiData['suggested_type_id']) ? (int)$aiData['suggested_type_id'] : 0;
+        if ($newTypeId > 0 && isset($typesMap[$newTypeId])) {
+            $updateFields['type'] = $newTypeId;
+        } else {
+            $newTypeId = 0;
+        }
+
+        if (count($updateFields) > 1) {
+            $ticket->update($updateFields);
+        }
+
+        // Human-readable summary of the classification applied automatically,
+        // reused in the private task(s) created below.
+        $classificationParts = [];
+        if ($newCategoryId > 0) {
+            $classificationParts[] = __('catégorie', 'aisuite');
+        }
+        if ($newTypeId > 0) {
+            $classificationParts[] = sprintf(__('type (%s)', 'aisuite'), $typesMap[$newTypeId]);
+        }
+        $classificationLabel = implode(' + ', $classificationParts);
 
         // The hardware type comes from AI-generated JSON: only ever instantiate
         // one of the explicitly whitelisted item types, never an arbitrary class.
@@ -253,9 +286,14 @@ class Sorter {
 
                 $link = $item->getLink();
 
+                $classificationText = $classificationLabel !== ''
+                    ? sprintf(__('Classification définie (%s) et ', 'aisuite'), $classificationLabel)
+                    : '';
+
                 $taskContent = sprintf(
-                    __('⚡ AI Auto-Action (Confiance %s%%) : Catégorie définie et matériel %s lié automatiquement.', 'aisuite'),
+                    __('⚡ AI Auto-Action (Confiance %s%%) : %smatériel %s lié automatiquement.', 'aisuite'),
                     $aiData['confidence_score'],
+                    $classificationText,
                     $link
                 );
 
@@ -271,16 +309,40 @@ class Sorter {
             }
         }
 
-        if (!$hardwareLinked && $newCategoryId > 0) {
+        if (!$hardwareLinked && ($newCategoryId > 0 || $newTypeId > 0)) {
             $task = new TicketTask();
             $task->add([
                 'tickets_id' => $ticketId,
                 'is_private' => 1,
-                'content'    => sprintf(__('⚡ AI Auto-Action (Confiance %s%%) : Catégorie mise à jour automatiquement.', 'aisuite'), $aiData['confidence_score']),
+                'content'    => sprintf(__('⚡ AI Auto-Action (Confiance %s%%) : Classification mise à jour automatiquement (%s).', 'aisuite'), $aiData['confidence_score'], $classificationLabel),
                 'users_id'   => Session::getLoginUserID() ?: 0,
                 'state'      => Planning::DONE
             ]);
         }
+    }
+
+    /* Technical: Fetch the ticket types available in this GLPI instance.
+     * Read dynamically from Ticket::getTypes() so the values (and their
+     * localized labels) always match the running instance, instead of being
+     * hardcoded. A defensive fallback to the two standard GLPI core types
+     * (Incident / Request) is kept in case the method is ever unavailable. */
+    private function getTicketTypes() {
+        $types = [];
+        if (class_exists('Ticket') && method_exists('Ticket', 'getTypes')) {
+            foreach (\Ticket::getTypes() as $id => $name) {
+                $id = (int)$id;
+                if ($id > 0) {
+                    $types[$id] = $name;
+                }
+            }
+        }
+        if (empty($types)) {
+            $types = [
+                \Ticket::INCIDENT_TYPE => __('Incident'),
+                \Ticket::DEMAND_TYPE   => __('Request'),
+            ];
+        }
+        return $types;
     }
 
     /* Technical: Fetch visible ITIL categories from DB (Limited to 150) */
