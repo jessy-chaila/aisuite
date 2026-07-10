@@ -28,6 +28,25 @@ if (isset($aisuiteConf['smartcheck_enabled']) && !$aisuiteConf['smartcheck_enabl
     exit;
 }
 
+$action = $_POST['action'] ?? $_GET['action'] ?? '';
+
+// ---------------------------------------------------------------------
+// Fresh CSRF token, fetched by the Smart Check JS (ticket.class.php)
+// right before each state-changing POST. GLPI 11's Kernel validates AND
+// consumes the CSRF token before this script runs, so the single token
+// embedded when the tab was rendered is only good for ONE request: once
+// the "analyze_ticket" POST consumed it, the "Note"/save POST reused a
+// dead token and the platform returned an HTML error page (parsed as a
+// "Erreur réseau" in the browser), which a page refresh worked around.
+// Minting a fresh token on demand (GET, not CSRF-guarded) immediately
+// before each POST fixes this - same pattern as ajax.chat.php,
+// ajax.level1.php and modal.form.php (Smart Sorter).
+// ---------------------------------------------------------------------
+if ($action === 'get_csrf_token') {
+    echo json_encode(['csrf_token' => Session::getNewCSRFToken()]);
+    exit;
+}
+
 if (!Session::validateCSRF($_POST)) {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => __('Jeton CSRF invalide.', 'aisuite')]);
@@ -35,12 +54,11 @@ if (!Session::validateCSRF($_POST)) {
 }
 
 // Basic Validation
-if (!isset($_POST['tickets_id']) || !isset($_POST['action'])) {
+if (!isset($_POST['tickets_id']) || $action === '') {
     echo json_encode(['success' => false, 'message' => __('Missing parameters.', 'aisuite')]);
     exit;
 }
 
-$action = $_POST['action'];
 $ticketId = (int)$_POST['tickets_id'];
 
 // Ensure the ticket exists and the current user can actually view it
@@ -84,6 +102,16 @@ try {
         // content internally)
         $content = $_POST['content'] ?? '';
         $result = Suggestion::saveAsNote($ticketId, $content);
+        // Queue a native GLPI confirmation toast that will be rendered on the
+        // page reload triggered by the JS right after this call, so the user
+        // still gets feedback that the note was added.
+        if (!empty($result['success'])) {
+            Session::addMessageAfterRedirect(
+                __('Note ajoutée au ticket.', 'aisuite'),
+                true,
+                INFO
+            );
+        }
         echo json_encode($result);
     }
 

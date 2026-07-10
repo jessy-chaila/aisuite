@@ -162,19 +162,38 @@ class Ticket extends CommonGLPI {
                 }
             }
 
-            function callApi(action, data, onSuccess, onError) {
-                const formData = new FormData();
-                formData.append('action', action);
-                const btnLaunch = document.getElementById('btn-launch-ai-analysis');
-                formData.append('tickets_id', btnLaunch ? btnLaunch.dataset.ticketId : '{$ticketId}');
-                formData.append('_glpi_csrf_token', config.csrf_token);
-                for (const key in data) formData.append(key, data[key]);
-
-                fetch(config.endpoint, { 
-                    method: 'POST', body: formData,
-                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-Glpi-Csrf-Token': config.csrf_token }
+            // Fetches a brand-new CSRF token right before each POST. GLPI 11's
+            // Kernel consumes the CSRF token on the first state-changing request,
+            // so the single token embedded when the tab was rendered dies after
+            // one call - reusing it (e.g. clicking "Note" after running the
+            // analysis) triggered an HTML error page seen as "Erreur réseau".
+            // Minting one on demand (same pattern as the other AI Suite modules)
+            // avoids that. Falls back to the embedded token on failure.
+            function fetchFreshCsrfToken() {
+                return fetch(config.endpoint + '?action=get_csrf_token', {
+                    method: 'GET',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
                 })
-                .then(r => r.json()).then(onSuccess).catch(onError);
+                .then(r => r.json())
+                .then(resp => (resp && resp.csrf_token) || config.csrf_token)
+                .catch(() => config.csrf_token);
+            }
+
+            function callApi(action, data, onSuccess, onError) {
+                fetchFreshCsrfToken().then(function(token) {
+                    const formData = new FormData();
+                    formData.append('action', action);
+                    const btnLaunch = document.getElementById('btn-launch-ai-analysis');
+                    formData.append('tickets_id', btnLaunch ? btnLaunch.dataset.ticketId : '{$ticketId}');
+                    formData.append('_glpi_csrf_token', token);
+                    for (const key in data) formData.append(key, data[key]);
+
+                    fetch(config.endpoint, {
+                        method: 'POST', body: formData,
+                        headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-Glpi-Csrf-Token': token }
+                    })
+                    .then(r => r.json()).then(onSuccess).catch(onError);
+                });
             }
 
             // --- Handlers ---
@@ -246,9 +265,14 @@ class Ticket extends CommonGLPI {
 
                 callApi('save_note', { content: container.innerHTML },
                     (data) => {
-                        btn.innerHTML = originalHtml;
-                        if(data.success) alert('Note ajoutée !');
-                        else alert('Erreur: ' + data.message);
+                        if(data.success) {
+                            // Reload so the freshly added followup shows in the
+                            // ticket timeline right away (no manual refresh).
+                            location.reload();
+                        } else {
+                            btn.innerHTML = originalHtml;
+                            alert('Erreur: ' + data.message);
+                        }
                     },
                     (err) => { btn.innerHTML = originalHtml; alert('Erreur réseau'); }
                 );
