@@ -78,11 +78,22 @@ class OpenAI implements ProviderInterface {
          ];
       }
 
+      // OpenAI's "reasoning" models (o1/o3/o4, gpt-5 family) require the newer
+      // 'max_completion_tokens' field and reject temperature != 1. Every other
+      // OpenAI-compatible backend - Mistral, xAI/Grok, classic Azure models -
+      // only understands 'max_tokens' and rejects 'max_completion_tokens' as an
+      // unknown parameter (HTTP 422). Default to 'max_tokens' and only switch
+      // for detected reasoning models.
       $payload = [
-         'messages'              => $openaiMessages,
-         'temperature'           => 0.2,
-         'max_completion_tokens' => 800,
+         'messages' => $openaiMessages,
       ];
+
+      if ($this->isReasoningModel($model)) {
+         $payload['max_completion_tokens'] = 800;
+      } else {
+         $payload['max_tokens']  = 800;
+         $payload['temperature'] = 0.2;
+      }
 
       // Only send 'model' when provided: Azure deployments already encode
       // the model in the URL, but OpenAI/xAI/Mistral require it explicitly.
@@ -158,5 +169,26 @@ class OpenAI implements ProviderInterface {
     */
    public function getLabel(): string {
       return __('OpenAI (compatible)', 'aisuite');
+   }
+
+   /**
+    * Detects OpenAI "reasoning" models (o1/o3/o4 and the gpt-5 family), which
+    * require 'max_completion_tokens' instead of 'max_tokens' and reject a
+    * temperature other than 1. Matching is done on a lowercased prefix so
+    * dated/suffixed variants (o3-mini, gpt-5-2025-08-07, ...) are covered too.
+    * Any other model - including Mistral and xAI/Grok - falls back to the
+    * classic 'max_tokens' + 'temperature' payload.
+    */
+   private function isReasoningModel(string $model): bool {
+      $model = strtolower(trim($model));
+      if ($model === '') {
+         return false;
+      }
+      foreach (['o1', 'o3', 'o4', 'gpt-5'] as $prefix) {
+         if (str_starts_with($model, $prefix)) {
+            return true;
+         }
+      }
+      return false;
    }
 }

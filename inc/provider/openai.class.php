@@ -61,24 +61,32 @@ class OpenAi implements ProviderInterface {
             ];
         }
 
+        $currentModel = trim((string)($config['ai_model'] ?? ''));
+
+        // OpenAI's "reasoning" models (o1/o3/o4, gpt-5 family) require the newer
+        // 'max_completion_tokens' field and reject a temperature other than 1.
+        // Every other OpenAI-compatible backend - Mistral, xAI/Grok, Azure with
+        // classic models - only understands the classic 'max_tokens' field and
+        // rejects 'max_completion_tokens' as an unknown parameter (HTTP 422). So
+        // we default to 'max_tokens' and only switch for detected reasoning
+        // models, keeping every backend working out of the box.
+        $isReasoning = $this->isReasoningModel($currentModel);
+
         $payload = [
-            'messages'              => $openaiMessages,
-            'max_completion_tokens' => $maxTokens,
+            'messages' => $openaiMessages,
         ];
 
-        $currentModel = trim((string)($config['ai_model'] ?? ''));
+        if ($isReasoning) {
+            $payload['max_completion_tokens'] = $maxTokens;
+        } else {
+            $payload['max_tokens']  = $maxTokens;
+            $payload['temperature'] = $temperature;
+        }
 
         // Only send 'model' when provided: Azure deployments already encode
         // the model in the URL, but OpenAI/xAI/Mistral require it explicitly.
         if (!empty($currentModel)) {
             $payload['model'] = $currentModel;
-        }
-
-        // Newer 'Reasoning' (o1, o3) or 'Nano' models reject temperature != 1:
-        // omit it for these models to use their default value.
-        $restrictedModels = ['gpt-5-nano', 'gpt-5-mini', 'o1', 'o3'];
-        if (!in_array($currentModel, $restrictedModels, true)) {
-            $payload['temperature'] = $temperature;
         }
 
         $ch = curl_init($url);
@@ -130,6 +138,25 @@ class OpenAi implements ProviderInterface {
             ];
         }
 
+        // Some OpenAI-compatible backends (Mistral, vLLM/TGI-based servers)
+        // report errors as a top-level {"object":"error","message":...,"type":...}
+        // object instead of OpenAI's {"error":{...}} envelope. Surface those too,
+        // so the real cause (e.g. a rejected parameter) is shown instead of the
+        // generic "no choices" message below. The 'message' may itself be a
+        // structured object (validation details), so flatten it to JSON.
+        if (($decoded['object'] ?? null) === 'error' && !isset($decoded['choices'])) {
+            $rawMsg = $decoded['message'] ?? __('Unknown Error', 'aisuite');
+            $msg    = is_string($rawMsg)
+                ? $rawMsg
+                : json_encode($rawMsg, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            $code   = $decoded['type'] ?? ($decoded['code'] ?? 'N/A');
+            return [
+                'assistantText' => null,
+                'usage'         => [],
+                'error'         => sprintf(__('API Error (%s): %s', 'aisuite'), $code, $msg),
+            ];
+        }
+
         if (empty($decoded['choices']) || !isset($decoded['choices'][0])) {
             return [
                 'assistantText' => null,
@@ -142,10 +169,19 @@ class OpenAi implements ProviderInterface {
         $finishReason = $choice['finish_reason'] ?? 'unknown';
 
         if ($finishReason === 'content_filter') {
+            // Azure AI Foundry reports which safety category tripped in
+            // content_filter_results.error.message (e.g. blocked by label
+            // 'PersonallyIdentifiableInformation'). Surface it when present so
+            // the admin knows exactly which filter to relax, instead of a
+            // generic message.
+            $base   = __('Content Filter: Response blocked by provider safety settings.', 'aisuite');
+            $detail = $choice['content_filter_results']['error']['message'] ?? '';
             return [
                 'assistantText' => null,
                 'usage'         => [],
-                'error'         => __('Content Filter: Response blocked by provider safety settings.', 'aisuite'),
+                'error'         => (is_string($detail) && $detail !== '')
+                    ? $base . ' (' . $detail . ')'
+                    : $base,
             ];
         }
 
@@ -185,5 +221,26 @@ class OpenAi implements ProviderInterface {
 
     public function getLabel(): string {
         return __('OpenAI (compatible)', 'aisuite');
+    }
+
+    /**
+     * Detects OpenAI "reasoning" models (o1/o3/o4 and the gpt-5 family), which
+     * require 'max_completion_tokens' instead of 'max_tokens' and reject a
+     * temperature other than 1. Matching is done on a lowercased prefix so
+     * dated/suffixed variants (o3-mini, gpt-5-2025-08-07, ...) are covered too.
+     * Any other model - including Mistral and xAI/Grok - falls back to the
+     * classic 'max_tokens' + 'temperature' payload.
+     */
+    private function isReasoningModel(string $model): bool {
+        $model = strtolower(trim($model));
+        if ($model === '') {
+            return false;
+        }
+        foreach (['o1', 'o3', 'o4', 'gpt-5'] as $prefix) {
+            if (str_starts_with($model, $prefix)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
