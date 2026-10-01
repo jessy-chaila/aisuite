@@ -978,3 +978,12 @@ msgstr "part des suggestions affichées dans la fenêtre qui ont été appliqué
 
 msgid "part des suggestions appliquées (automatiquement ou par clic) dont la valeur est toujours celle du ticket aujourd'hui. Une valeur modifiée ensuite par un humain compte comme une erreur ; une valeur jamais relue compte comme conservée."
 msgstr "part des suggestions appliquées (automatiquement ou par clic) dont la valeur est toujours celle du ticket aujourd'hui. Une valeur modifiée ensuite par un humain compte comme une erreur ; une valeur jamais relue compte comme conservée."
+
+msgid "déjà en place"
+msgstr "déjà en place"
+
+msgid "sous le seuil"
+msgstr "sous le seuil"
+
+msgid "Évalué, non modifié"
+msgstr "Évalué, non modifié"

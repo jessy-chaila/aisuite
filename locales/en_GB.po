@@ -961,3 +961,12 @@ msgstr "share of the suggestions shown in the popup that were applied rather tha
 
 msgid "part des suggestions appliquées (automatiquement ou par clic) dont la valeur est toujours celle du ticket aujourd'hui. Une valeur modifiée ensuite par un humain compte comme une erreur ; une valeur jamais relue compte comme conservée."
 msgstr "share of applied suggestions (automatically or by click) whose value is still the ticket's value today. A value changed afterwards by a human counts as a miss; a value never reviewed counts as kept."
+
+msgid "déjà en place"
+msgstr "already in place"
+
+msgid "sous le seuil"
+msgstr "below threshold"
+
+msgid "Évalué, non modifié"
+msgstr "Evaluated, left unchanged"

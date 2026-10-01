@@ -503,7 +503,7 @@ class Sorter {
             $task->add([
                 'tickets_id' => $ticketId,
                 'is_private' => 1,
-                'content'    => self::buildAutoActionHtml($aiData, $update['values'], $suggestions, $categoriesMap, $hardwareLink),
+                'content'    => self::buildAutoActionHtml($aiData, $update['values'], $suggestions, $categoriesMap, $hardwareLink, $ticket, $threshold),
                 'users_id'   => Session::getLoginUserID() ?: 0,
                 'state'      => Planning::DONE
             ]);
@@ -517,7 +517,7 @@ class Sorter {
      * overall score is deliberately not shown: it no longer gates classification).
      * Only tags GLPI's rich-text sanitizer keeps (p, ul, li, strong, em). Priority
      * has no certainty of its own: it is derived from urgency/impact. */
-    private static function buildAutoActionHtml(array $aiData, array $values, array $suggestions, array $categoriesMap, $hardwareLink) {
+    private static function buildAutoActionHtml(array $aiData, array $values, array $suggestions, array $categoriesMap, $hardwareLink, Ticket $ticket, $threshold) {
         $e = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 
         $rows = [
@@ -543,8 +543,29 @@ class Sorter {
             $items .= '<li><strong>' . $e(__('Matériel lié', 'aisuite')) . '</strong> : ' . $hardwareLink . '</li>';
         }
 
-        return '<p><strong>⚡ ' . $e(__('Action automatique AI Smart Sorter', 'aisuite')) . '</strong></p>'
+        // Fields the AI evaluated but that were left as they are, with the reason, so
+        // the message accounts for every field instead of silently omitting some.
+        $unchanged = '';
+        foreach ($suggestions as $field => $sug) {
+            if ($field === 'priority' || isset($values[$field])) continue;
+            $reasons = [];
+            if ($sug['value'] === (int)($ticket->fields[$sug['column']] ?? 0)) {
+                $reasons[] = __('déjà en place', 'aisuite');
+            }
+            $min = self::thresholdFor($threshold, $field);
+            if ($min !== null && $sug['confidence'] < $min) {
+                $reasons[] = __('sous le seuil', 'aisuite');
+            }
+            $unchanged .= '<li><strong>' . $e($rows[$field][0]) . '</strong> : ' . $e($rows[$field][1]($sug['value']))
+                . ' <em>(' . (int)$sug['confidence'] . ' %' . (empty($reasons) ? '' : ' — ' . $e(implode(', ', $reasons))) . ')</em></li>';
+        }
+
+        $html = '<p><strong>⚡ ' . $e(__('Action automatique AI Smart Sorter', 'aisuite')) . '</strong></p>'
             . '<ul>' . $items . '</ul>';
+        if ($unchanged !== '') {
+            $html .= '<p><em>' . $e(__('Évalué, non modifié', 'aisuite')) . '</em></p><ul>' . $unchanged . '</ul>';
+        }
+        return $html;
     }
 
     /* Technical: Minimum certainty (%) to auto-apply each field. A per-field
