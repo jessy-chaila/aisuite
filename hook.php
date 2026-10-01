@@ -146,6 +146,8 @@ function plugin_aisuite_install() {
         'sorter_confidence_threshold'    => 80,
         'sorter_enable_hardware_linking' => 1,
         'sorter_system_prompt_context'   => '',
+        'sorter_prioritization_rules'    => '',
+        'sorter_max_urgency'             => 0,
 
         // --- AI Chatbot (uses provider_active) ---
         'chat_system_prompt'        => '',

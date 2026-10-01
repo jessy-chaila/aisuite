@@ -111,19 +111,52 @@ if ($action === 'get_suggestion') {
          exit;
     }
 
-    $categoryName = $aiData['suggested_category_name'] ?? $aiData['suggested_category'] ?? __('N/A', 'aisuite');
-    if ($categoryName === 'null') $categoryName = __('N/A', 'aisuite');
-
-    /* Technical: Resolve the suggested ticket type. Display the instance's own
-     * localized label (from Ticket::getTypes()) when the suggested ID is one of
-     * the types actually available, rather than trusting the AI-provided name. */
-    $availableTypes = (method_exists('Ticket', 'getTypes')) ? Ticket::getTypes() : [];
-    $suggestedTypeId = isset($aiData['suggested_type_id']) ? (int)$aiData['suggested_type_id'] : 0;
-    $typeName = null;
-    if ($suggestedTypeId > 0 && isset($availableTypes[$suggestedTypeId])) {
-        $typeName = $availableTypes[$suggestedTypeId];
-    } elseif (!empty($aiData['suggested_type_name']) && $aiData['suggested_type_name'] !== 'null') {
-        $typeName = $aiData['suggested_type_name'];
+    /* Technical: Resolve every suggested field (category, type, urgency, impact,
+     * priority) with its own confidence. Labels come from GLPI itself, never from
+     * the AI-provided names; category/type are always listed (even undetermined),
+     * the other fields only if the AI proposed a valid value. */
+    $sorterClass   = '\\GlpiPlugin\\Aisuite\\SmartSorter\\Sorter';
+    $suggestions   = $sorterClass::resolveSuggestions($aiData, null, $checkTicket);
+    $autoApplied   = (array)($aiData['auto_applied_fields'] ?? []);
+    $appliedValues = (array)($aiData['auto_applied_values'] ?? []);
+    $valueLabels   = [
+        'type'     => static fn($v) => Ticket::getTicketTypeName($v),
+        'urgency'  => static fn($v) => Ticket::getUrgencyName($v),
+        'impact'   => static fn($v) => Ticket::getImpactName($v),
+        'priority' => static fn($v) => Ticket::getPriorityName($v),
+    ];
+    $fieldTitles   = [
+        'category' => __('Catégorie suggérée', 'aisuite'),
+        'type'     => __('Type suggéré', 'aisuite'),
+        'urgency'  => __('Urgence suggérée', 'aisuite'),
+        'impact'   => __('Impact suggéré', 'aisuite'),
+        'priority' => __('Priorité suggérée', 'aisuite'),
+    ];
+    $fields = [];
+    foreach ($fieldTitles as $field => $title) {
+        if (!isset($suggestions[$field]) && !in_array($field, ['category', 'type'], true)) {
+            continue;
+        }
+        if ($field === 'category') {
+            $valueName = isset($suggestions['category'])
+                ? ($aiData['suggested_category_name'] ?? $aiData['suggested_category'] ?? null)
+                : null;
+        } elseif (isset($suggestions[$field])) {
+            $valueName = $valueLabels[$field]($suggestions[$field]['value']);
+        } else {
+            $valueName = null;
+        }
+        $fields[] = [
+            'key'        => $field,
+            'label'      => $title,
+            'value'      => $valueName,
+            'confidence' => isset($suggestions[$field]) ? $suggestions[$field]['confidence'] : null,
+            // Flagged only if what was applied is the suggested value (logs from before
+            // auto_applied_values existed fall back to the field list).
+            'applied'    => isset($appliedValues[$field])
+                ? (isset($suggestions[$field]) && (int)$appliedValues[$field] === $suggestions[$field]['value'])
+                : in_array($field, $autoApplied, true),
+        ];
     }
 
     /* Technical: Hardware identification */
@@ -138,9 +171,8 @@ if ($action === 'get_suggestion') {
 
     $labels = [
         'title'          => __('Suggestion AI SmartSorter', 'aisuite'),
-        'suggested_cat'  => __('Catégorie suggérée', 'aisuite'),
-        'suggested_type' => __('Type suggéré', 'aisuite'),
-        'confidence'     => __('Confiance', 'aisuite'),
+        'confidence'     => __('Certitude', 'aisuite'),
+        'already_applied' => __('Déjà appliqué automatiquement', 'aisuite'),
         'hardware_found' => __('Matériel détecté', 'aisuite'),
         'hardware_none'  => __('Aucun matériel détecté', 'aisuite'),
         'btn_ignore'     => __('Ignorer', 'aisuite'),
@@ -154,11 +186,12 @@ if ($action === 'get_suggestion') {
         'success'        => true,
         'has_suggestion' => true,
         'log_id'         => $row['id'],
-        'category'       => $categoryName,
-        'ticket_type'    => $typeName,
-        'reasoning'      => $aiData['reasoning'] ?? '',
+        'fields'         => $fields,
+        // The model sometimes double-escapes quotes (\" shown literally): undo it.
+        'reasoning'      => str_replace('\\"', '"', (string)($aiData['reasoning'] ?? '')),
         'confidence'     => $row['confidence_score'],
         'hardware'       => $hardwareDisplay,
+        'hardware_enabled' => !isset($aisuiteConf['sorter_enable_hardware_linking']) || !empty($aisuiteConf['sorter_enable_hardware_linking']),
         'cost'           => $costDisplay,
         'labels'         => $labels
     ]);
@@ -206,34 +239,13 @@ if ($action === 'apply_suggestion') {
     $row = $iterator->current();
     $aiData = json_decode($row['ai_response'], true);
 
-    /* Technical: Apply ITIL Category to the ticket - only if it's one of the
-     * helpdesk-visible categories (never trust the stored suggestion's ID as
-     * an arbitrary category: a successful prompt injection when the
-     * suggestion was generated could otherwise have stored an ID the AI was
-     * never actually offered). */
-    $ticketUpdate = ['id' => $ticketId];
-
-    $newCategoryId = isset($aiData['suggested_category_id']) ? (int)$aiData['suggested_category_id'] : 0;
-    if ($newCategoryId > 0) {
-        $validCategory = $DB->request([
-            'COUNT'  => 'cpt',
-            'FROM'   => 'glpi_itilcategories',
-            'WHERE'  => ['id' => $newCategoryId, 'is_helpdeskvisible' => 1],
-        ])->current()['cpt'] ?? 0;
-
-        if ($validCategory > 0) {
-            $ticketUpdate['itilcategories_id'] = $newCategoryId;
-        }
-    }
-
-    /* Technical: Apply the suggested ticket type - only if it's one of the
-     * types actually available in this GLPI instance (Ticket::getTypes()),
-     * never trusted as an arbitrary value coming from the stored AI JSON. */
-    $availableTypes = (method_exists('Ticket', 'getTypes')) ? Ticket::getTypes() : [];
-    $newTypeId = isset($aiData['suggested_type_id']) ? (int)$aiData['suggested_type_id'] : 0;
-    if ($newTypeId > 0 && isset($availableTypes[$newTypeId])) {
-        $ticketUpdate['type'] = $newTypeId;
-    }
+    /* Technical: Apply the suggested ITIL classification (category, type,
+     * urgency, impact, priority). Every value is re-validated against what the
+     * instance actually offers (helpdesk-visible categories, Ticket types,
+     * urgency/impact masks) - never trusted as an arbitrary ID from the stored
+     * AI JSON, in case a prompt injection altered it when it was generated. */
+    $sorterClass  = '\\GlpiPlugin\\Aisuite\\SmartSorter\\Sorter';
+    $ticketUpdate = ['id' => $ticketId] + $sorterClass::buildTicketUpdate($checkTicket, $aiData)['fields'];
 
     if (count($ticketUpdate) > 1) {
         $ticket = new Ticket();
@@ -243,8 +255,10 @@ if ($action === 'apply_suggestion') {
     /* Technical: Link hardware items and create private task.
      * The hardware type comes from AI-generated JSON: only ever instantiate
      * one of the explicitly whitelisted item types, never an arbitrary class. */
+    $hardwareLinkingEnabled = !isset($aisuiteConf['sorter_enable_hardware_linking']) || !empty($aisuiteConf['sorter_enable_hardware_linking']);
     if (
-        !empty($aiData['detected_hardware_id'])
+        $hardwareLinkingEnabled
+        && !empty($aiData['detected_hardware_id'])
         && !empty($aiData['detected_hardware_type'])
         && in_array($aiData['detected_hardware_type'], $allowedHardwareTypes, true)
         && class_exists($aiData['detected_hardware_type'])

@@ -383,21 +383,6 @@ msgstr "AI Error:"
 msgid "Auto-Applied changes for Ticket #%d (Score: %d%%)"
 msgstr "Auto-Applied changes for Ticket #%d (Score: %d%%)"
 
-#: inc/sorter.class.php:212
-#, php-format
-msgid ""
-"⚡ AI Auto-Action (Confiance %s%%) : Catégorie définie et matériel %s lié "
-"automatiquement."
-msgstr ""
-"⚡ AI Auto-Action (Confidence %s%%): Category defined and hardware %s linked "
-"automatically."
-
-#: inc/sorter.class.php:235
-#, php-format
-msgid ""
-"⚡ AI Auto-Action (Confiance %s%%) : Catégorie mise à jour automatiquement."
-msgstr "⚡ AI Auto-Action (Confidence %s%%): Category automatically updated."
-
 msgid "Numéro de téléphone du support"
 msgstr "Support phone number"
 
@@ -871,22 +856,64 @@ msgstr ""
 msgid "Type suggéré"
 msgstr "Suggested type"
 
-msgid "type (%s)"
-msgstr "type (%s)"
-
-msgid "catégorie"
-msgstr "category"
-
-msgid "Classification définie (%s) et "
-msgstr "Classification set (%s) and "
-
-msgid "⚡ AI Auto-Action (Confiance %s%%) : %smatériel %s lié automatiquement."
-msgstr ""
 "⚡ AI Auto-Action (Confidence %s%%): %shardware %s linked automatically."
 
-msgid ""
-"⚡ AI Auto-Action (Confiance %s%%) : Classification mise à jour "
-"automatiquement (%s)."
-msgstr ""
-"⚡ AI Auto-Action (Confidence %s%%): Classification automatically updated "
-"(%s)."
+msgid "Urgence suggérée"
+msgstr "Suggested urgency"
+
+msgid "Impact suggéré"
+msgstr "Suggested impact"
+
+msgid "Priorité suggérée"
+msgstr "Suggested priority"
+
+msgid "Certitude"
+msgstr "Certainty"
+
+msgid "Déjà appliqué automatiquement"
+msgstr "Already applied automatically"
+
+msgid "Règles de priorisation"
+msgstr "Prioritization rules"
+
+msgid "Ex : Impact Faible = 1 utilisateur ; Moyen = une équipe ; Élevé = plusieurs services. Urgence Très haute uniquement si un service critique est à l'arrêt."
+msgstr "E.g. Low impact = 1 user; Medium = one team; High = several services. Very high urgency only if a critical service is down."
+
+msgid "Votre barème pour juger l'urgence et l'impact. Utilisé seulement pour les champs que l'utilisateur n'a pas renseignés ; la priorité en est déduite via la matrice GLPI."
+msgstr "Your scale for judging urgency and impact. Only used for fields the requester did not fill in; priority is derived from them via the GLPI matrix."
+
+msgid "Urgence maximale attribuée par l'IA"
+msgstr "Maximum urgency assigned by the AI"
+
+msgid "Aucune limite"
+msgstr "No limit"
+
+msgid "Si l'IA propose une urgence supérieure, elle est ramenée à ce niveau (et non refusée). Seul un humain peut dépasser cette limite."
+msgstr "If the AI suggests a higher urgency, it is lowered to this level (not rejected). Only a human can exceed this limit."
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Urgence"
+msgstr "Urgency"
+
+msgid "Impact"
+msgstr "Impact"
+
+msgid "Priorité"
+msgstr "Priority"
+
+msgid "calculée depuis urgence et impact"
+msgstr "computed from urgency and impact"
+
+msgid "Matériel lié"
+msgstr "Linked hardware"
+
+msgid "Action automatique AI Smart Sorter"
+msgstr "AI Smart Sorter automatic action"
+
+msgid "Confiance globale"
+msgstr "Overall confidence"
+
+msgid "Note ajoutée au ticket."
+msgstr "Note added to the ticket."

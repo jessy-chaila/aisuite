@@ -65,17 +65,31 @@ $(document).ready(function() {
 
         var lbl = data.labels;
 
-        /* Technical: Category display logic with fallback for undetermined values */
-        var categoryDisplay = data.category;
-        if (!categoryDisplay || categoryDisplay === 'N/A' || categoryDisplay === 'null') {
-            categoryDisplay = '<span style="color:#999; font-style:italic;">' + lbl.not_determined + '</span>';
+        /* Technical: One row per suggested field (category, type, urgency, impact,
+         * priority), each with its own certainty badge. */
+        function escapeHtml(str) {
+            return $('<div>').text(str).html();
         }
-
-        /* Technical: Ticket type display logic with fallback for undetermined values */
-        var typeDisplay = data.ticket_type;
-        if (!typeDisplay || typeDisplay === 'N/A' || typeDisplay === 'null') {
-            typeDisplay = '<span style="color:#999; font-style:italic;">' + lbl.not_determined + '</span>';
+        function confidenceBadge(score) {
+            var cls = score >= 80 ? '#198754' : (score >= 50 ? '#ffc107' : '#dc3545');
+            var txt = score >= 50 && score < 80 ? '#000' : '#fff';
+            return '<span style="background:' + cls + '; color:' + txt + '; font-size:11px; font-weight:bold; padding:2px 8px; border-radius:10px; margin-left:8px;">' + score + '%</span>';
         }
+        var fieldsHtml = '';
+        (data.fields || []).forEach(function(f, idx) {
+            var value = f.value;
+            if (!value || value === 'N/A' || value === 'null') {
+                value = '<span style="color:#999; font-style:italic;">' + lbl.not_determined + '</span>';
+            } else {
+                value = escapeHtml(value);
+            }
+            var appliedHtml = f.applied
+                ? ' <i class="fas fa-bolt" style="color:#ffc107;" title="' + escapeHtml(lbl.already_applied) + '"></i>'
+                : '';
+            fieldsHtml += '<div class="ai-label"' + (idx > 0 ? ' style="margin-top:8px;"' : '') + '>' + escapeHtml(f.label) + '</div>'
+                + '<div class="ai-value">' + value
+                + (f.confidence !== null ? confidenceBadge(f.confidence) : '') + appliedHtml + '</div>';
+        });
 
         /* Technical: Hardware display logic - handles Free vs Premium UI states */
         var hardwareHtml = '';
@@ -87,12 +101,15 @@ $(document).ready(function() {
                 <i class="fas fa-lock" style="color: #dc3545;"></i>
                 <span>${lbl.free_lock_msg}</span>
             </div>`;
+        } else if (data.hardware_enabled === false) {
+            /* Technical: hardware linking disabled in the config: show nothing */
+            hardwareHtml = '';
         } else {
             /* Technical: Case 2 - Premium mode (active) */
             if (data.hardware && data.hardware !== 'null' && data.hardware !== 'N/A') {
                 hardwareHtml = `
                 <div class="ai-hardware-alert success" style="background: #d1e7dd; border: 1px solid #badbcc; color: #0f5132; padding: 10px; border-radius: 6px; margin-top: 10px;">
-                    <i class="fas fa-microchip"></i> ${lbl.hardware_found}: <strong>${data.hardware}</strong>
+                    <i class="fas fa-microchip"></i> ${lbl.hardware_found}: <strong>${escapeHtml(data.hardware)}</strong>
                 </div>`;
             } else {
                 hardwareHtml = `
@@ -126,14 +143,10 @@ $(document).ready(function() {
                     ${quotaHtml}
                 </div>
                 <div class="ai-modal-body">
-                    <p class="ai-reasoning">"${data.reasoning}"</p>
+                    <p class="ai-reasoning">"${escapeHtml(data.reasoning || '')}"</p>
 
                     <div class="ai-suggestion-box">
-                        <div class="ai-label">${lbl.suggested_cat}</div>
-                        <div class="ai-value">${categoryDisplay}</div>
-                        <div class="ai-label" style="margin-top:8px;">${lbl.suggested_type}</div>
-                        <div class="ai-value">${typeDisplay}</div>
-                        <div class="ai-confidence">${lbl.confidence}: ${data.confidence}%</div>
+                        ${fieldsHtml}
                     </div>
 
                     ${hardwareHtml}
@@ -175,7 +188,7 @@ $(document).ready(function() {
                 }, function(res) {
                     $('#' + modalId).fadeOut();
                     if(res.success) {
-                        /* Technical: Reload the page to reflect ITIL category assignment */
+                        /* Technical: Reload the page to reflect the ITIL classification */
                         location.reload();
                     }
                 }, 'json');

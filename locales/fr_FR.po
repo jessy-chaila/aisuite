@@ -389,22 +389,6 @@ msgstr ""
 "Erreur IA : modifications appliquées automatiquement pour le ticket #%d "
 "(score : %d %%)"
 
-#: inc/sorter.class.php:212
-#, php-format
-msgid ""
-"⚡ AI Auto-Action (Confiance %s%%) : Catégorie définie et matériel %s lié "
-"automatiquement."
-msgstr ""
-"⚡ AI Auto-Action (Confiance %s%%) : Catégorie définie et matériel %s lié "
-"automatiquement."
-
-#: inc/sorter.class.php:235
-#, php-format
-msgid ""
-"⚡ AI Auto-Action (Confiance %s%%) : Catégorie mise à jour automatiquement."
-msgstr ""
-"⚡ AI Auto-Action (Confiance %s%%) : Catégorie mise à jour automatiquement."
-
 msgid "Numéro de téléphone du support"
 msgstr "Numéro de téléphone du support"
 
@@ -889,22 +873,64 @@ msgstr ""
 msgid "Type suggéré"
 msgstr "Type suggéré"
 
-msgid "type (%s)"
-msgstr "type (%s)"
-
-msgid "catégorie"
-msgstr "catégorie"
-
-msgid "Classification définie (%s) et "
-msgstr "Classification définie (%s) et "
-
-msgid "⚡ AI Auto-Action (Confiance %s%%) : %smatériel %s lié automatiquement."
-msgstr ""
 "⚡ AI Auto-Action (Confiance %s%%) : %smatériel %s lié automatiquement."
 
-msgid ""
-"⚡ AI Auto-Action (Confiance %s%%) : Classification mise à jour "
-"automatiquement (%s)."
-msgstr ""
-"⚡ AI Auto-Action (Confiance %s%%) : Classification mise à jour "
-"automatiquement (%s)."
+msgid "Urgence suggérée"
+msgstr "Urgence suggérée"
+
+msgid "Impact suggéré"
+msgstr "Impact suggéré"
+
+msgid "Priorité suggérée"
+msgstr "Priorité suggérée"
+
+msgid "Certitude"
+msgstr "Certitude"
+
+msgid "Déjà appliqué automatiquement"
+msgstr "Déjà appliqué automatiquement"
+
+msgid "Règles de priorisation"
+msgstr "Règles de priorisation"
+
+msgid "Ex : Impact Faible = 1 utilisateur ; Moyen = une équipe ; Élevé = plusieurs services. Urgence Très haute uniquement si un service critique est à l'arrêt."
+msgstr "Ex : Impact Faible = 1 utilisateur ; Moyen = une équipe ; Élevé = plusieurs services. Urgence Très haute uniquement si un service critique est à l'arrêt."
+
+msgid "Votre barème pour juger l'urgence et l'impact. Utilisé seulement pour les champs que l'utilisateur n'a pas renseignés ; la priorité en est déduite via la matrice GLPI."
+msgstr "Votre barème pour juger l'urgence et l'impact. Utilisé seulement pour les champs que l'utilisateur n'a pas renseignés ; la priorité en est déduite via la matrice GLPI."
+
+msgid "Urgence maximale attribuée par l'IA"
+msgstr "Urgence maximale attribuée par l'IA"
+
+msgid "Aucune limite"
+msgstr "Aucune limite"
+
+msgid "Si l'IA propose une urgence supérieure, elle est ramenée à ce niveau (et non refusée). Seul un humain peut dépasser cette limite."
+msgstr "Si l'IA propose une urgence supérieure, elle est ramenée à ce niveau (et non refusée). Seul un humain peut dépasser cette limite."
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Urgence"
+msgstr "Urgence"
+
+msgid "Impact"
+msgstr "Impact"
+
+msgid "Priorité"
+msgstr "Priorité"
+
+msgid "calculée depuis urgence et impact"
+msgstr "calculée depuis urgence et impact"
+
+msgid "Matériel lié"
+msgstr "Matériel lié"
+
+msgid "Action automatique AI Smart Sorter"
+msgstr "Action automatique AI Smart Sorter"
+
+msgid "Confiance globale"
+msgstr "Confiance globale"
+
+msgid "Note ajoutée au ticket."
+msgstr "Note ajoutée au ticket."

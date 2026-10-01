@@ -166,6 +166,8 @@ if (isset($_POST['save_sorter'])) {
         'sorter_confidence_threshold'    => (int)($_POST['sorter_confidence_threshold'] ?? 80),
         'sorter_enable_hardware_linking' => (int)($_POST['sorter_enable_hardware_linking'] ?? 0),
         'sorter_system_prompt_context'   => $_POST['sorter_system_prompt_context'] ?? '',
+        'sorter_prioritization_rules'    => $_POST['sorter_prioritization_rules'] ?? '',
+        'sorter_max_urgency'             => max(0, min(5, (int)($_POST['sorter_max_urgency'] ?? 0))),
     ]);
     $saved = 'sorter';
 }
@@ -471,6 +473,27 @@ echo "  <label class='col-sm-3 col-form-label'>" . __('Prompt Système (Context)
 echo "  <div class='col-sm-9'>";
 Html::textarea(['name' => 'sorter_system_prompt_context', 'value' => $conf['sorter_system_prompt_context'] ?? '', 'class' => 'form-control font-monospace', 'rows' => 5]);
 echo "    <div class='form-text'>" . __('Instructions spécifiques pour ajuster le comportement de l\'IA.', 'aisuite') . "</div>";
+echo "  </div>";
+echo " </div>";
+
+echo " <div class='mb-3 row'>";
+echo "  <label class='col-sm-3 col-form-label'>" . __('Règles de priorisation', 'aisuite') . "</label>";
+echo "  <div class='col-sm-9'>";
+Html::textarea(['name' => 'sorter_prioritization_rules', 'value' => $conf['sorter_prioritization_rules'] ?? '', 'class' => 'form-control font-monospace', 'rows' => 6, 'placeholder' => __("Ex : Impact Faible = 1 utilisateur ; Moyen = une équipe ; Élevé = plusieurs services. Urgence Très haute uniquement si un service critique est à l'arrêt.", 'aisuite')]);
+echo "    <div class='form-text'>" . __("Votre barème pour juger l'urgence et l'impact. Utilisé seulement pour les champs que l'utilisateur n'a pas renseignés ; la priorité en est déduite via la matrice GLPI.", 'aisuite') . "</div>";
+echo "  </div>";
+echo " </div>";
+
+echo " <div class='mb-3 row'>";
+echo "  <label class='col-sm-3 col-form-label'>" . __('Urgence maximale attribuée par l\'IA', 'aisuite') . "</label>";
+echo "  <div class='col-sm-9'>";
+echo "    <select name='sorter_max_urgency' class='form-select' style='width: 250px;'>";
+echo "      <option value='0'" . (empty($conf['sorter_max_urgency']) ? ' selected' : '') . ">" . __('Aucune limite', 'aisuite') . "</option>";
+for ($u = 1; $u <= 5; $u++) {
+    echo "      <option value='$u'" . ((int)($conf['sorter_max_urgency'] ?? 0) === $u ? ' selected' : '') . ">" . Ticket::getUrgencyName($u) . "</option>";
+}
+echo "    </select>";
+echo "    <div class='form-text'>" . __("Si l'IA propose une urgence supérieure, elle est ramenée à ce niveau (et non refusée). Seul un humain peut dépasser cette limite.", 'aisuite') . "</div>";
 echo "  </div>";
 echo " </div>";
 
