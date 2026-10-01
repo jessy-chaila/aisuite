@@ -26,7 +26,7 @@ Runs automatically when a ticket is created and replies directly in the ticket i
 * **Per-module enable/disable** — turn any of the four modules on or off independently from its own configuration tab (e.g. keep only the chatbot active). Disabling a module fully unregisters its GLPI tab/hooks/assets, not just hides it.
 * **User-editable cost estimation** — set your own input/output price per 1M tokens for each provider family directly in the config screen; the cost/token estimates shown in Smart Check and Smart Sorter update automatically, no code changes needed.
 * **Cost & token tracking** — every AI call displays its estimated cost and token usage (Smart Check tab, Smart Sorter popup and history dashboard).
-* **Audit trail** — Smart Sorter logs every AI decision (category, type, urgency, impact, priority, hardware, confidence, cost) and creates a private task in the ticket for full traceability.
+* **Audit trail** — Smart Sorter logs every AI decision (category, type, urgency, impact, priority, hardware, confidence, cost) and creates a structured private task in the ticket for full traceability: one line per applied field with its own certainty, the linked hardware, and the fields the AI evaluated but left unchanged (with the reason: already in place, or below threshold).
 * **One-click connection test** — validate any provider's API key/URL/model straight from the config screen before saving.
 
 ## 🛠️ Configuration
