@@ -911,8 +911,5 @@ msgstr "Linked hardware"
 msgid "Action automatique AI Smart Sorter"
 msgstr "AI Smart Sorter automatic action"
 
-msgid "Confiance globale"
-msgstr "Overall confidence"
-
 msgid "Note ajoutée au ticket."
 msgstr "Note added to the ticket."

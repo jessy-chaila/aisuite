@@ -928,8 +928,5 @@ msgstr "Matériel lié"
 msgid "Action automatique AI Smart Sorter"
 msgstr "Action automatique AI Smart Sorter"
 
-msgid "Confiance globale"
-msgstr "Confiance globale"
-
 msgid "Note ajoutée au ticket."
 msgstr "Note ajoutée au ticket."

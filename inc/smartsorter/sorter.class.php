@@ -462,7 +462,8 @@ class Sorter {
     }
 
     /* Technical: HTML of the private task posted after an automatic classification:
-     * a title line, then one bullet per applied field with its own certainty.
+     * a title line, then one bullet per applied field with its own certainty (the
+     * overall score is deliberately not shown: it no longer gates classification).
      * Only tags GLPI's rich-text sanitizer keeps (p, ul, li, strong, em). Priority
      * has no certainty of its own: it is derived from urgency/impact. */
     private static function buildAutoActionHtml(array $aiData, array $values, array $suggestions, array $categoriesMap, $hardwareLink) {
@@ -491,8 +492,7 @@ class Sorter {
             $items .= '<li><strong>' . $e(__('Matériel lié', 'aisuite')) . '</strong> : ' . $hardwareLink . '</li>';
         }
 
-        return '<p><strong>⚡ ' . $e(__('Action automatique AI Smart Sorter', 'aisuite')) . '</strong>'
-            . ' — ' . $e(__('Confiance globale', 'aisuite')) . ' : <strong>' . (int)($aiData['confidence_score'] ?? 0) . ' %</strong></p>'
+        return '<p><strong>⚡ ' . $e(__('Action automatique AI Smart Sorter', 'aisuite')) . '</strong></p>'
             . '<ul>' . $items . '</ul>';
     }
 
