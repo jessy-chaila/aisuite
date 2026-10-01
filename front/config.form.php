@@ -159,6 +159,11 @@ if (isset($_POST['save_smartcheck'])) {
 }
 
 // --- AI Smart Sorter tab ---
+// Per-field threshold: empty (or 0) = use the default threshold; otherwise 50-100.
+function aisuiteFieldThreshold($value) {
+    $value = (int)$value;
+    return $value <= 0 ? 0 : max(50, min(100, $value));
+}
 if (isset($_POST['save_sorter'])) {
     Config::setConfigurationValues($plugin_config_name, [
         'sorter_enabled'                 => !empty($_POST['sorter_enabled']) ? 1 : 0,
@@ -169,6 +174,11 @@ if (isset($_POST['save_sorter'])) {
         'sorter_prioritization_rules'    => $_POST['sorter_prioritization_rules'] ?? '',
         'sorter_max_urgency'             => max(0, min(5, (int)($_POST['sorter_max_urgency'] ?? 0))),
         'sorter_override_prefilled'      => (int)($_POST['sorter_override_prefilled'] ?? 0),
+        'sorter_threshold_category'      => aisuiteFieldThreshold($_POST['sorter_threshold_category'] ?? ''),
+        'sorter_threshold_type'          => aisuiteFieldThreshold($_POST['sorter_threshold_type'] ?? ''),
+        'sorter_threshold_urgency'       => aisuiteFieldThreshold($_POST['sorter_threshold_urgency'] ?? ''),
+        'sorter_threshold_impact'        => aisuiteFieldThreshold($_POST['sorter_threshold_impact'] ?? ''),
+        'sorter_fewshot_count'           => max(0, min(10, (int)($_POST['sorter_fewshot_count'] ?? 0))),
     ]);
     $saved = 'sorter';
 }
@@ -486,6 +496,28 @@ echo "  </div>";
 echo " </div>";
 
 echo " <div class='mb-3 row'>";
+echo "  <label class='col-sm-3 col-form-label'>" . __('Seuils par champ (%)', 'aisuite') . "</label>";
+echo "  <div class='col-sm-9'>";
+echo "   <div class='d-flex flex-wrap gap-3'>";
+foreach (['category' => __('Catégorie', 'aisuite'), 'type' => __('Type', 'aisuite'), 'urgency' => __('Urgence', 'aisuite'), 'impact' => __('Impact', 'aisuite')] as $fk => $fl) {
+    $fv = (int)($conf['sorter_threshold_' . $fk] ?? 0);
+    echo "    <div><small class='text-muted d-block'>" . $fl . "</small>";
+    echo "    <input type='number' name='sorter_threshold_{$fk}' min='50' max='100' value='" . ($fv > 0 ? $fv : '') . "' placeholder='" . (int)($conf['sorter_confidence_threshold'] ?? 80) . "' class='form-control' style='width: 90px;'></div>";
+}
+echo "   </div>";
+echo "    <div class='form-text'>" . __("Seuil propre à chaque champ ; laissez vide pour utiliser le seuil minimum ci-dessus. L'urgence et l'impact, plus subjectifs, justifient souvent un seuil un peu plus bas que la catégorie et le type. Voir « Fiabilité des scores » pour régler d'après les faits.", 'aisuite') . "</div>";
+echo "  </div>";
+echo " </div>";
+
+echo " <div class='mb-3 row'>";
+echo "  <label class='col-sm-3 col-form-label'>" . __("Exemples validés envoyés à l'IA", 'aisuite') . "</label>";
+echo "  <div class='col-sm-9'>";
+echo "    <input type='number' name='sorter_fewshot_count' min='0' max='10' value='" . (int)($conf['sorter_fewshot_count'] ?? 0) . "' class='form-control' style='width: 100px;'>";
+echo "    <div class='form-text'>" . __("Nombre de tickets passés de la même entité, dont un humain a validé la classification, ajoutés au prompt comme exemples (0 = désactivé). Améliore la cohérence avec vos habitudes. Attention : le titre et un court extrait de ces tickets, d'autres demandeurs, sont envoyés au fournisseur d'IA.", 'aisuite') . "</div>";
+echo "  </div>";
+echo " </div>";
+
+echo " <div class='mb-3 row'>";
 echo "  <label class='col-sm-3 col-form-label'>" . __('Réévaluer les valeurs préremplies', 'aisuite') . "</label>";
 echo "  <div class='col-sm-9'>";
 echo '<input type="hidden" name="sorter_override_prefilled" value="0">';
@@ -516,6 +548,9 @@ Html::closeForm();
 echo "<div class='text-center mt-3'>";
 echo "<button type='button' class='btn btn-secondary btn-sm' data-bs-toggle='modal' data-bs-target='#ai-logs-modal'>";
 echo "<i class='fas fa-history'></i> " . __('Afficher l\'historique', 'aisuite');
+echo "</button> ";
+echo "<button type='button' class='btn btn-secondary btn-sm' data-bs-toggle='modal' data-bs-target='#ai-stats-modal'>";
+echo "<i class='fas fa-chart-bar'></i> " . __('Fiabilité des scores', 'aisuite');
 echo "</button>";
 echo "</div>";
 
@@ -584,6 +619,19 @@ if (count($iterator) > 0) {
 }
 
 echo "      </div>";
+echo "      <div class='modal-footer'><button type='button' class='btn btn-secondary' data-bs-dismiss='modal'>" . __('Fermer', 'aisuite') . "</button></div>";
+echo "    </div></div></div>";
+
+
+// --- Score reliability modal ---
+echo "<div class='modal fade' id='ai-stats-modal' tabindex='-1' aria-hidden='true'>";
+echo "  <div class='modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable'>";
+echo "    <div class='modal-content'>";
+echo "      <div class='modal-header'>";
+echo "        <h5 class='modal-title'><i class='fas fa-chart-bar'></i> " . __('Fiabilité des scores', 'aisuite') . "</h5>";
+echo "        <button type='button' class='btn-close' data-bs-dismiss='modal'></button>";
+echo "      </div>";
+echo "      <div class='modal-body'>" . \GlpiPlugin\Aisuite\SmartSorter\Stats::render() . "</div>";
 echo "      <div class='modal-footer'><button type='button' class='btn btn-secondary' data-bs-dismiss='modal'>" . __('Fermer', 'aisuite') . "</button></div>";
 echo "    </div></div></div>";
 

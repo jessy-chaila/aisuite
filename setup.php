@@ -17,7 +17,7 @@ use GlpiPlugin\Aisuite\SmartSorter\Ticket as SmartSorterTicket;
 use GlpiPlugin\Aisuite\SmartSorter\Sorter as SmartSorterSorter;
 use GlpiPlugin\Aisuite\Level1\Ticket as Level1Ticket;
 
-define('PLUGIN_AISUITE_VERSION', '1.0.5');
+define('PLUGIN_AISUITE_VERSION', '1.1.0');
 
 /**
  * Init hooks of the plugin.

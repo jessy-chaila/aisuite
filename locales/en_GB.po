@@ -919,3 +919,45 @@ msgstr "Re-evaluate prefilled values"
 
 msgid "Si activé, l'IA évalue aussi l'urgence, l'impact et la priorité quand ils ne sont pas à leur valeur par défaut (gabarit de ticket, règle métier…). Si la valeur en place lui semble juste, rien ne change ; sinon elle est corrigée selon les seuils. Si désactivé, une valeur différente du défaut est considérée comme saisie par le demandeur et n'est jamais modifiée."
 msgstr "If enabled, the AI also evaluates urgency, impact and priority when they are not at their default value (ticket template, business rule…). If the current value looks right to it, nothing changes; otherwise it is corrected according to the thresholds. If disabled, a value different from the default is considered set by the requester and is never modified."
+
+msgid "Acceptée dans la fenêtre"
+msgstr "Accepted in the popup"
+
+msgid "Cas"
+msgstr "Cases"
+
+msgid "Certitude annoncée"
+msgstr "Announced certainty"
+
+msgid "Champ"
+msgstr "Field"
+
+msgid "Compare la certitude annoncée par l'IA à ce qui s'est réellement passé ensuite. Si les tranches hautes ont un meilleur taux que les basses, le score est fiable et le seuil peut être réglé en conséquence."
+msgstr "Compares the certainty announced by the AI with what actually happened afterwards. If the high buckets have a better rate than the low ones, the score is reliable and the threshold can be tuned accordingly."
+
+msgid "Exemples validés envoyés à l'IA"
+msgstr "Validated examples sent to the AI"
+
+msgid "Fiabilité des scores"
+msgstr "Score reliability"
+
+msgid "Nombre de tickets passés de la même entité, dont un humain a validé la classification, ajoutés au prompt comme exemples (0 = désactivé). Améliore la cohérence avec vos habitudes. Attention : le titre et un court extrait de ces tickets, d'autres demandeurs, sont envoyés au fournisseur d'IA."
+msgstr "Number of past tickets from the same entity, whose classification a human validated, added to the prompt as examples (0 = disabled). Improves consistency with your habits. Note: the title and a short excerpt of those tickets, from other requesters, are sent to the AI provider."
+
+msgid "Pas encore assez de données."
+msgstr "Not enough data yet."
+
+msgid "Seuil propre à chaque champ ; laissez vide pour utiliser le seuil minimum ci-dessus. L'urgence et l'impact, plus subjectifs, justifient souvent un seuil un peu plus bas que la catégorie et le type. Voir « Fiabilité des scores » pour régler d'après les faits."
+msgstr "Threshold specific to each field; leave empty to use the minimum threshold above. Urgency and impact, being more subjective, often justify a slightly lower threshold than category and type. See \"Score reliability\" to tune it from facts."
+
+msgid "Seuils par champ (%)"
+msgstr "Per-field thresholds (%)"
+
+msgid "Valeur conservée"
+msgstr "Value kept"
+
+msgid "part des suggestions affichées dans la fenêtre qui ont été appliquées plutôt qu'ignorées."
+msgstr "share of the suggestions shown in the popup that were applied rather than dismissed."
+
+msgid "part des suggestions appliquées (automatiquement ou par clic) dont la valeur est toujours celle du ticket aujourd'hui. Une valeur modifiée ensuite par un humain compte comme une erreur ; une valeur jamais relue compte comme conservée."
+msgstr "share of applied suggestions (automatically or by click) whose value is still the ticket's value today. A value changed afterwards by a human counts as a miss; a value never reviewed counts as kept."
