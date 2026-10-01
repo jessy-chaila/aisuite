@@ -148,6 +148,7 @@ function plugin_aisuite_install() {
         'sorter_system_prompt_context'   => '',
         'sorter_prioritization_rules'    => '',
         'sorter_max_urgency'             => 0,
+        'sorter_override_prefilled'      => 0,
 
         // --- AI Chatbot (uses provider_active) ---
         'chat_system_prompt'        => '',

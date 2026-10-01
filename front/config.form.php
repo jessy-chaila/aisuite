@@ -168,6 +168,7 @@ if (isset($_POST['save_sorter'])) {
         'sorter_system_prompt_context'   => $_POST['sorter_system_prompt_context'] ?? '',
         'sorter_prioritization_rules'    => $_POST['sorter_prioritization_rules'] ?? '',
         'sorter_max_urgency'             => max(0, min(5, (int)($_POST['sorter_max_urgency'] ?? 0))),
+        'sorter_override_prefilled'      => (int)($_POST['sorter_override_prefilled'] ?? 0),
     ]);
     $saved = 'sorter';
 }
@@ -481,6 +482,15 @@ echo "  <label class='col-sm-3 col-form-label'>" . __('Règles de priorisation',
 echo "  <div class='col-sm-9'>";
 Html::textarea(['name' => 'sorter_prioritization_rules', 'value' => $conf['sorter_prioritization_rules'] ?? '', 'class' => 'form-control font-monospace', 'rows' => 6, 'placeholder' => __("Ex : Impact Faible = 1 utilisateur ; Moyen = une équipe ; Élevé = plusieurs services. Urgence Très haute uniquement si un service critique est à l'arrêt.", 'aisuite')]);
 echo "    <div class='form-text'>" . __("Votre barème pour juger l'urgence et l'impact. Utilisé seulement pour les champs que l'utilisateur n'a pas renseignés ; la priorité en est déduite via la matrice GLPI.", 'aisuite') . "</div>";
+echo "  </div>";
+echo " </div>";
+
+echo " <div class='mb-3 row'>";
+echo "  <label class='col-sm-3 col-form-label'>" . __('Réévaluer les valeurs préremplies', 'aisuite') . "</label>";
+echo "  <div class='col-sm-9'>";
+echo '<input type="hidden" name="sorter_override_prefilled" value="0">';
+echo '<input type="checkbox" class="form-check-input" name="sorter_override_prefilled" value="1" ' . (!empty($conf['sorter_override_prefilled']) ? 'checked' : '') . '>';
+echo "    <div class='form-text'>" . __("Si activé, l'IA évalue aussi l'urgence, l'impact et la priorité quand ils ne sont pas à leur valeur par défaut (gabarit de ticket, règle métier…). Si la valeur en place lui semble juste, rien ne change ; sinon elle est corrigée selon les seuils. Si désactivé, une valeur différente du défaut est considérée comme saisie par le demandeur et n'est jamais modifiée.", 'aisuite') . "</div>";
 echo "  </div>";
 echo " </div>";
 

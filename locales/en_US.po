@@ -913,3 +913,9 @@ msgstr "AI Smart Sorter automatic action"
 
 msgid "Note ajoutée au ticket."
 msgstr "Note added to the ticket."
+
+msgid "Réévaluer les valeurs préremplies"
+msgstr "Re-evaluate prefilled values"
+
+msgid "Si activé, l'IA évalue aussi l'urgence, l'impact et la priorité quand ils ne sont pas à leur valeur par défaut (gabarit de ticket, règle métier…). Si la valeur en place lui semble juste, rien ne change ; sinon elle est corrigée selon les seuils. Si désactivé, une valeur différente du défaut est considérée comme saisie par le demandeur et n'est jamais modifiée."
+msgstr "If enabled, the AI also evaluates urgency, impact and priority when they are not at their default value (ticket template, business rule…). If the current value looks right to it, nothing changes; otherwise it is corrected according to the thresholds. If disabled, a value different from the default is considered set by the requester and is never modified."

@@ -65,10 +65,21 @@ class Sorter {
         $typesStr      = json_encode($typesMap, JSON_UNESCAPED_UNICODE);
         $urgenciesStr  = json_encode(self::getScale('urgency'), JSON_UNESCAPED_UNICODE);
         $impactsStr    = json_encode(self::getScale('impact'), JSON_UNESCAPED_UNICODE);
-        $lockedFields  = self::getUserSetFields($ticket);
+        $overridePrefilled = self::overridePrefilled();
+        $lockedFields  = $overridePrefilled ? [] : self::getUserSetFields($ticket);
         $userSetStr    = empty($lockedFields)
             ? 'None: the requester left urgency and impact at their default value, you must propose both.'
             : json_encode($lockedFields['values'], JSON_UNESCAPED_UNICODE);
+        // Prefilled mode: the values on the ticket may just be defaults or come from a
+        // ticket template, so they are shown to the AI as "to confirm or correct".
+        $currentValuesStr = json_encode([
+            'urgency'  => (int)($ticket->fields['urgency'] ?? 0),
+            'impact'   => (int)($ticket->fields['impact'] ?? 0),
+            'priority' => (int)($ticket->fields['priority'] ?? 0),
+        ]);
+        $currentBlock = $overridePrefilled
+            ? "CURRENT TICKET VALUES (field => ID), possibly just defaults or template values: evaluate urgency and impact yourself from the request; if the current value is already right, return that same value:\n        $currentValuesStr\n\n        "
+            : '';
         $rules         = trim((string)($this->config['sorter_prioritization_rules'] ?? ''));
         $rulesStr      = $rules !== '' ? $rules : 'None provided: use common IT service desk sense (a single-user incident is rarely very urgent).';
         $customContext = $this->config['sorter_system_prompt_context'] ?? '';
@@ -103,7 +114,7 @@ class Sorter {
         VALUES ALREADY SET BY THE REQUESTER (field => ID). Do NOT suggest these fields (use null) but take them into account in your reasoning:
         $userSetStr
 
-        PRIORITIZATION RULES OF THE ORGANIZATION (they take precedence over your own judgment for urgency and impact):
+        $currentBlock        PRIORITIZATION RULES OF THE ORGANIZATION (they take precedence over your own judgment for urgency and impact):
         $rulesStr
 
         USER ASSETS (Type - Name):
@@ -204,7 +215,7 @@ class Sorter {
 
         // Fields the requester filled in are never overridden, and the AI cannot
         // claim otherwise: this list is computed server-side only.
-        $data['locked_fields'] = array_keys(self::getUserSetFields($ticket)['values'] ?? []);
+        $data['locked_fields'] = self::overridePrefilled() ? [] : array_keys(self::getUserSetFields($ticket)['values'] ?? []);
         unset($data['suggested_priority'], $data['priority_confidence']);
 
         $confidence = (int)($data['confidence_score'] ?? 0);
@@ -244,10 +255,11 @@ class Sorter {
                 $data['auto_applied_values'] = $appliedValues;
                 $cleanJson = json_encode($data, JSON_UNESCAPED_UNICODE);
                 Toolbox::logInFile('aisuite', sprintf(__("Auto-Applied changes for Ticket #%d (Score: %d%%)", 'aisuite'), $ticket->getID(), $confidence) . "\n");
-                // Everything suggested was applied: nothing left to review.
-                if (count($applied) >= count(self::resolveSuggestions($data, $categoriesMap, $ticket))) {
-                    $action = 'auto_applied';
-                }
+            }
+            // Nothing left that would still change the ticket (everything applied,
+            // or the AI agrees with the values already in place): no popup needed.
+            if (empty(self::pendingSuggestions($data, $categoriesMap, $ticket, $appliedValues))) {
+                $action = 'auto_applied';
             }
         }
 
@@ -355,30 +367,64 @@ class Sorter {
         return $out;
     }
 
+    /* Technical: "Override prefilled values" setting. When on, urgency, impact and
+     * priority are evaluated by the AI even if they are not at their GLPI default
+     * (they may come from a ticket template or a business rule): if the AI agrees
+     * with the value in place nothing changes, otherwise it is corrected. */
+    public static function overridePrefilled() {
+        return !empty(PluginConfig::get()['sorter_override_prefilled']);
+    }
+
+    /* Technical: Current value of a classified field on the ticket. */
+    private static function currentValue(Ticket $ticket, $column) {
+        return (int)($ticket->fields[$column] ?? 0);
+    }
+
+    /* Technical: Suggestions that would still change the ticket and were not
+     * applied: the popup only needs to stay open for those. A suggestion equal
+     * to the value already on the ticket is not pending. */
+    public static function pendingSuggestions(array $aiData, ?array $categoriesMap, Ticket $ticket, array $appliedValues = []) {
+        $pending = [];
+        foreach (self::resolveSuggestions($aiData, $categoriesMap, $ticket) as $field => $s) {
+            if ($s['value'] === self::currentValue($ticket, $s['column'])) continue;
+            if (isset($appliedValues[$field]) && (int)$appliedValues[$field] === $s['value']) continue;
+            $pending[$field] = $s;
+        }
+        return $pending;
+    }
+
     /* Technical: Build the Ticket update from the validated suggestions.
      * $threshold = null applies every suggested field (manual "Apply" click);
      * otherwise only fields whose own confidence reaches it are applied.
-     * Priority is recomputed from what is actually applied (urgency/impact
-     * applied now, the ticket's current value for the other one).
+     * A suggestion equal to the current value is a no-op and is not reported as
+     * applied. Priority is recomputed from the urgency/impact retained (the
+     * evaluated one, or the ticket's current value for the other) as soon as
+     * urgency or impact was evaluated, and applied if it differs.
      * Returns ['fields' => [column => value], 'applied' => [field, ...], 'values' => [field => value]]. */
     public static function buildTicketUpdate(Ticket $ticket, array $aiData, ?array $categoriesMap = null, $threshold = null) {
-        $fields  = [];
-        $applied = [];
-        $values  = [];
+        $fields    = [];
+        $applied   = [];
+        $values    = [];
+        $retained  = [];
         foreach (self::resolveSuggestions($aiData, $categoriesMap, $ticket) as $field => $s) {
             if ($field === 'priority') continue;
             if ($threshold !== null && $s['confidence'] < $threshold) continue;
+            $retained[$field] = $s['value'];
+            if ($s['value'] === self::currentValue($ticket, $s['column'])) continue;
             $fields[$s['column']] = $s['value'];
             $values[$field]       = $s['value'];
             $applied[]            = $field;
         }
-        if (!in_array('priority', (array)($aiData['locked_fields'] ?? []), true) && (isset($fields['urgency']) || isset($fields['impact']))) {
-            $fields['priority'] = (int)Ticket::computePriority(
-                $fields['urgency'] ?? (int)$ticket->fields['urgency'],
-                $fields['impact'] ?? (int)$ticket->fields['impact']
+        if (!in_array('priority', (array)($aiData['locked_fields'] ?? []), true) && (isset($retained['urgency']) || isset($retained['impact']))) {
+            $priority = (int)Ticket::computePriority(
+                $retained['urgency'] ?? self::currentValue($ticket, 'urgency'),
+                $retained['impact'] ?? self::currentValue($ticket, 'impact')
             );
-            $values['priority'] = $fields['priority'];
-            $applied[]          = 'priority';
+            if ($priority !== self::currentValue($ticket, 'priority')) {
+                $fields['priority'] = $priority;
+                $values['priority'] = $priority;
+                $applied[]          = 'priority';
+            }
         }
         return ['fields' => $fields, 'applied' => $applied, 'values' => $values];
     }
