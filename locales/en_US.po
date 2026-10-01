@@ -856,7 +856,6 @@ msgstr ""
 msgid "Type suggéré"
 msgstr "Suggested type"
 
-"⚡ AI Auto-Action (Confidence %s%%): %shardware %s linked automatically."
 
 msgid "Urgence suggérée"
 msgstr "Suggested urgency"
