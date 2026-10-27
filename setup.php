@@ -17,7 +17,7 @@ use GlpiPlugin\Aisuite\SmartSorter\Ticket as SmartSorterTicket;
 use GlpiPlugin\Aisuite\SmartSorter\Sorter as SmartSorterSorter;
 use GlpiPlugin\Aisuite\Level1\Ticket as Level1Ticket;
 
-define('PLUGIN_AISUITE_VERSION', '1.1.0');
+define('PLUGIN_AISUITE_VERSION', '1.2.0');
 
 /**
  * Init hooks of the plugin.
@@ -131,7 +131,7 @@ function plugin_version_aisuite() {
         'homepage'       => 'https://coreforge.fr',
         'requirements'   => [
             'glpi' => [
-                'min' => '11.0.0',
+                'min' => '12.0.0',
             ]
         ],
         'config_page'    => 'front/config.form.php'
@@ -143,8 +143,8 @@ function plugin_version_aisuite() {
  * MUST be named plugin_aisuite_check_prerequisites.
  */
 function plugin_aisuite_check_prerequisites() {
-    if (version_compare(GLPI_VERSION, '11.0.0', '<')) {
-        echo sprintf(__('This plugin requires GLPI >= %s', 'aisuite'), '11.0.0');
+    if (version_compare(GLPI_VERSION, '12.0.0', '<')) {
+        echo sprintf(__('This plugin requires GLPI >= %s', 'aisuite'), '12.0.0');
         return false;
     }
     return true;

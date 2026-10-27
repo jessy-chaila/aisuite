@@ -1,10 +1,10 @@
-# AI Suite (GLPI 11) 🤖✨
+# AI Suite (GLPI 12) 🤖✨
 
 **One plugin, four AI-powered assistants for your helpdesk.**
 
 AI Suite is a GLPI plugin that brings AI assistance to every stage of ticket handling: level 2 technical analysis, automatic categorization, a level 1 chatbot, and automatic first response — all four modules sharing a single AI provider configuration.
 
-**Compatibility:** Developed for **GLPI 11+** (Verified on v11.0.8).
+**Compatibility:** Developed for **GLPI 12** (tested on v12.0.0).
 
 ## 📦 What's inside — 4 modules, 1 plugin
 
@@ -41,7 +41,7 @@ Everything is managed from **Setup > Plugins > AI Suite**, a single screen with 
 
 ## 📋 Prerequisites
 
-* **GLPI 11+** (functionality verified on v11.0.8).
+* **GLPI 12** (tested on v12.0.0).
 * **PHP 8.2+**.
 * A valid API key for at least one supported provider family (OpenAI/Azure/xAI/Mistral, Anthropic, or Google Gemini).
 
@@ -73,7 +73,7 @@ The suite is designed to assist, not replace, and to keep humans in control:
 * **Traceability** — every AI action (analysis, categorization, hardware link, chat-originated ticket, Level 1 resolution/escalation) is logged or recorded as a followup/private task.
 * **User control** — end users can always opt out of the AI Level 1 Assistant on a given ticket and request a human technician directly, from the Helpdesk (self-service) interface.
 * **Safe execution** — no direct system commands are ever executed by the AI, and hardware linking is restricted to a whitelist of known GLPI item types.
-* **Access control** — every AJAX endpoint enforces GLPI session/rights checks and CSRF token validation, and every state-changing action (ticket creation from chat, Smart Sorter apply/dismiss, Level 1 opt-out) fetches a fresh CSRF token immediately before its request, compatible with GLPI 11's own Kernel-level CSRF enforcement.
+* **Access control** — every AJAX endpoint enforces GLPI session/rights checks and CSRF token validation, and every state-changing action (ticket creation from chat, Smart Sorter apply/dismiss, Level 1 opt-out) fetches a fresh CSRF token immediately before its request, compatible with GLPI 12's own Kernel-level CSRF enforcement.
 
 ## 🗄️ Database
 

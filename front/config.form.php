@@ -299,7 +299,7 @@ echo "  <div class='col-sm-9'>";
 echo "   <select name='provider_active' id='provider_active' class='form-select' style='max-width:60ch;'>";
 foreach ($families as $code => $label) {
     $selected = ($code === $active_provider) ? ' selected' : '';
-    echo "<option value='{$code}'$selected>" . Html::entities_deep($label) . "</option>";
+    echo "<option value='{$code}'$selected>" . \htmlspecialchars($label) . "</option>";
 }
 echo "   </select>";
 echo "  </div>";
@@ -327,7 +327,7 @@ foreach ($families as $family => $label) {
     $keyPlaceholder = $hasStoredKey
         ? __('Clé déjà enregistrée — laisser vide pour la conserver', 'aisuite')
         : '';
-    echo "   <input type='password' name='provider_{$family}_key' value='' autocomplete='new-password' placeholder='" . Html::entities_deep($keyPlaceholder) . "' class='form-control' size='60'>";
+    echo "   <input type='password' name='provider_{$family}_key' value='' autocomplete='new-password' placeholder='" . \htmlspecialchars($keyPlaceholder) . "' class='form-control' size='60'>";
     echo "  </div>";
     echo " </div>";
 
@@ -349,14 +349,14 @@ foreach ($families as $family => $label) {
     echo " <div class='mb-3 row'>";
     echo "  <label class='col-sm-3 col-form-label'>" . __('Prix entrée ($ / 1M tokens)', 'aisuite') . "</label>";
     echo "  <div class='col-sm-9'>";
-    echo "   <input type='number' step='0.01' min='0' name='provider_{$family}_price_input' value='" . Html::entities_deep($priceInputVal) . "' class='form-control' style='max-width:20ch;'>";
+    echo "   <input type='number' step='0.01' min='0' name='provider_{$family}_price_input' value='" . \htmlspecialchars($priceInputVal) . "' class='form-control' style='max-width:20ch;'>";
     echo "  </div>";
     echo " </div>";
 
     echo " <div class='mb-3 row'>";
     echo "  <label class='col-sm-3 col-form-label'>" . __('Prix sortie ($ / 1M tokens)', 'aisuite') . "</label>";
     echo "  <div class='col-sm-9'>";
-    echo "   <input type='number' step='0.01' min='0' name='provider_{$family}_price_output' value='" . Html::entities_deep($priceOutputVal) . "' class='form-control' style='max-width:20ch;'>";
+    echo "   <input type='number' step='0.01' min='0' name='provider_{$family}_price_output' value='" . \htmlspecialchars($priceOutputVal) . "' class='form-control' style='max-width:20ch;'>";
     echo "   <div class='form-text'>" . __('Sert uniquement à estimer le coût affiché dans AI Smart Check et AI Smart Sorter (n\'affecte pas la facturation réelle du fournisseur).', 'aisuite') . "</div>";
     echo "  </div>";
     echo " </div>";
@@ -414,7 +414,7 @@ echo " <div class='mb-3 row'>";
 $tooltip_text = __("L'IA recherche uniquement les mots clés extraits du titre du ticket et retrouvés dans le titre de l'article.", 'aisuite');
 echo "  <label class='col-sm-3 col-form-label'>";
 echo __('Chercher dans la base de connaissances', 'aisuite');
-echo " <i class='fas fa-info-circle text-info ms-1' style='cursor: help;' title=\"" . Html::entities_deep($tooltip_text) . "\"></i>";
+echo " <i class='fas fa-info-circle text-info ms-1' style='cursor: help;' title=\"" . \htmlspecialchars($tooltip_text) . "\"></i>";
 echo "</label>";
 echo "  <div class='col-sm-9'>";
 $isChecked = !empty($conf['smartcheck_enable_kb_search']) ? 'checked' : '';
@@ -675,7 +675,7 @@ echo " <div class='mb-3 row'>";
 echo "  <label class='col-sm-3 col-form-label'>" . __('Groupe "Assistant IA"', 'aisuite') . "</label>";
 echo "  <div class='col-sm-9'>";
 if ($aiGroupName !== '') {
-    echo "<span class='badge bg-azure-lt'>" . Html::entities_deep($aiGroupName) . "</span>";
+    echo "<span class='badge bg-azure-lt'>" . \htmlspecialchars($aiGroupName) . "</span>";
     echo "   <div class='form-text'>" . __("Créé et géré automatiquement par le plugin : chaque ticket pris en charge par l'IA y est assigné le temps qu'elle s'en occupe, et il en est retiré dès que l'utilisateur désactive l'IA, qu'un technicien répond directement, ou que le ticket est réattribué au groupe d'escalade ci-dessous.", 'aisuite') . "</div>";
 } else {
     echo "<span class='text-muted'>" . __("Ce groupe sera créé automatiquement à la prochaine installation/mise à jour du plugin.", 'aisuite') . "</span>";
@@ -749,7 +749,7 @@ if (count($level1Iterator) > 0) {
     foreach ($level1Iterator as $row) {
         $ticketLink = "<a href='" . $CFG_GLPI["root_doc"] . "/front/ticket.form.php?id=" . $row['tickets_id'] . "' target='_blank'>#" . $row['tickets_id'] . "</a>";
 
-        $statusInfo = $level1StatusLabels[$row['status']] ?? ['class' => 'bg-secondary text-white', 'label' => Html::entities_deep((string)$row['status'])];
+        $statusInfo = $level1StatusLabels[$row['status']] ?? ['class' => 'bg-secondary text-white', 'label' => \htmlspecialchars((string)$row['status'])];
         $statusBadge = "<span class='badge " . $statusInfo['class'] . "'>" . $statusInfo['label'] . "</span>";
 
         $cost = isset($row['execution_cost']) ? (float)$row['execution_cost'] : 0.0;
@@ -846,7 +846,7 @@ echo "  <div class='col-sm-9'>";
 echo Html::input('chat_bot_icon_image_file', ['name' => 'chat_bot_icon_image_file', 'type' => 'file', 'class' => 'form-control']);
 echo Html::input('chat_bot_icon_image_url_current', ['type' => 'hidden', 'value' => $conf['chat_bot_icon_image_url'] ?? '']);
 if (!empty($conf['chat_bot_icon_image_url'])) {
-    echo "<div class='mt-2'><img src='" . Html::entities_deep($conf['chat_bot_icon_image_url']) . "' style='max-height:48px;max-width:48px;border-radius:50%;border:1px solid #ddd;background:#fff;'></div>";
+    echo "<div class='mt-2'><img src='" . \htmlspecialchars($conf['chat_bot_icon_image_url']) . "' style='max-height:48px;max-width:48px;border-radius:50%;border:1px solid #ddd;background:#fff;'></div>";
 }
 echo "  </div>";
 echo " </div>";

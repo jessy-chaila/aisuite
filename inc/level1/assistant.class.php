@@ -383,7 +383,7 @@ Output STRICTLY valid JSON (no markdown, no code fences), with this exact struct
 
         $list = '';
         foreach ($questions as $question) {
-            $list .= '<li>' . Html::entities_deep((string)$question) . '</li>';
+            $list .= '<li>' . \htmlspecialchars((string)$question) . '</li>';
         }
         if ($list !== '') {
             $content .= "<ul>$list</ul>";
